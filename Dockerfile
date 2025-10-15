@@ -1,14 +1,17 @@
-# Step 1: Use OpenJDK image
-FROM openjdk:17-jdk-slim
+# Use a lightweight JDK image
+FROM eclipse-temurin:17-jdk
 
-# Step 2: Set working directory
+# Set working directory
 WORKDIR /app
 
-# Step 3: Copy Maven files and build app
+# Copy all project files
 COPY . .
 
-# Step 4: Build using Maven Wrapper
-RUN chmod +x mvnw && ./mvnw clean package -DskipTests
+# Package the application (skip tests to speed up)
+RUN ./mvnw clean package -DskipTests
 
-# Step 5: Run the app
-CMD ["java", "-jar", "target/ecommerce-app-0.0.1-SNAPSHOT.jar"]
+# Expose the Spring Boot default port
+EXPOSE 8080
+
+# Run the packaged JAR file
+CMD ["java", "-jar", "target/ecommerce-app-1.0.0.jar"]
