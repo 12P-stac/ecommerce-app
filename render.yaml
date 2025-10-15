@@ -1,8 +1,11 @@
 services:
   - type: web
     name: ecommerce-app
-    env: docker
+    runtime: docker
     plan: free
-    branch: main
     region: oregon
-    autoDeploy: true
+    buildCommand: ./mvnw clean package -DskipTests
+    startCommand: java -jar target/ecommerce-app-1.0.0.jar
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
