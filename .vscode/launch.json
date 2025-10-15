@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Application",
+            "request": "launch",
+            "mainClass": "com.ecommerce.Application",
+            "projectName": "ecommerce-app"
+        },
+        {
+            "name": "Launch and Debug Hosted Blazor WebAssembly App",
+            "type": "blazorwasm",
+            "request": "launch",
+            "hosted": true,
+            "program": "${workspaceFolder}/bin/Debug/<target-framework>/<project-name.dll>",
+            "cwd": "${workspaceFolder}"
+        },
+        {
+            "name": "Launch Chrome",
+            "request": "launch",
+            "type": "chrome",
+            "url": "http://localhost:3000",
+            "webRoot": "${workspaceFolder}"
+        }
+    ]
+}

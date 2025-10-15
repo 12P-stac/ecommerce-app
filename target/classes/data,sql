@@ -1,0 +1,4 @@
+INSERT INTO users (name, email, password) VALUES
+('Admin User', 'admin@example.com', 'admin123'),
+('Patrick', 'patricknyale6@gmail.com', 'mypassword'),
+('Test User', 'test@example.com', 'test123');
