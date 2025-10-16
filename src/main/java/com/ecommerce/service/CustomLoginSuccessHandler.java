@@ -15,17 +15,23 @@ import java.util.Set;
 public class CustomLoginSuccessHandler implements AuthenticationSuccessHandler {
 
     @Override
-    public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
-                                        Authentication authentication) throws IOException, ServletException {
+    public void onAuthenticationSuccess(HttpServletRequest request,
+                                        HttpServletResponse response,
+                                        Authentication authentication) 
+                                        throws IOException, ServletException {
 
         Set<String> roles = AuthorityUtils.authorityListToSet(authentication.getAuthorities());
 
+        // Redirect based on role
         if (roles.contains("ROLE_ADMIN")) {
-            response.sendRedirect("/admin/dashboard");
+            response.sendRedirect(request.getContextPath() + "/admin/dashboard");
         } else if (roles.contains("ROLE_SELLER")) {
-            response.sendRedirect("/seller/dashboard");
+            response.sendRedirect(request.getContextPath() + "/seller/dashboard");
+        } else if (roles.contains("ROLE_USER")) {
+            response.sendRedirect(request.getContextPath() + "/user/dashboard");
         } else {
-            response.sendRedirect("/user/dashboard");
+            // fallback
+            response.sendRedirect(request.getContextPath() + "/");
         }
     }
 }

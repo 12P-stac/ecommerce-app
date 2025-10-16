@@ -19,11 +19,13 @@ public class SecurityConfig {
     @Autowired
     private CustomLoginSuccessHandler loginSuccessHandler;
 
+    // Password encoder bean
     @Bean
     public BCryptPasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
+    // Authentication provider using custom user details service
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
@@ -32,9 +34,11 @@ public class SecurityConfig {
         return provider;
     }
 
+    // Main security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
+            // Authorization rules
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
@@ -42,15 +46,20 @@ public class SecurityConfig {
                 .requestMatchers("/user/**").hasRole("USER")
                 .anyRequest().authenticated()
             )
+            // Login configuration
             .formLogin(form -> form
                 .loginPage("/login")
                 .successHandler(loginSuccessHandler)
                 .permitAll()
             )
+            // Logout configuration
             .logout(logout -> logout
-                .logoutSuccessUrl("/login?logout")
+                .logoutUrl("/logout")
+                .logoutSuccessUrl("/")  // redirect to homepage after logout
                 .permitAll()
-            );
+            )
+            // Disable CSRF for simplicity (optional)
+            .csrf(csrf -> csrf.disable());
 
         return http.build();
     }

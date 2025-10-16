@@ -36,10 +36,19 @@ public class AuthController {
 
     @PostMapping("/register")
     public String registerUser(
+            @RequestParam String firstName,
+            @RequestParam String lastName,
             @RequestParam String username,
-            @RequestParam String password,
             @RequestParam String email,
+            @RequestParam String password,
+            @RequestParam String confirmPassword,
             Model model) {
+
+        // Check password match
+        if (!password.equals(confirmPassword)) {
+            model.addAttribute("error", "Passwords do not match");
+            return "register";
+        }
 
         // Check if username already exists
         if (userService.existsByUsername(username)) {
@@ -55,9 +64,11 @@ public class AuthController {
 
         // Create a new user
         User user = new User();
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         user.setUsername(username);
-        user.setPassword(passwordEncoder.encode(password));
         user.setEmail(email);
+        user.setPassword(passwordEncoder.encode(password));
 
         // Assign default role USER
         Role userRole = roleService.findByName("USER")
