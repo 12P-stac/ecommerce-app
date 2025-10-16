@@ -24,7 +24,7 @@ public class HomeController {
         }
 
         // Default page for guests
-        return "home"; // maps to src/main/resources/templates/index.html
+        return "home"; // maps to src/main/resources/templates/home.html
     }
 
     @GetMapping("/login")
@@ -39,6 +39,6 @@ public class HomeController {
             if (roles.contains("ROLE_USER")) return "redirect:/user/dashboard";
         }
 
-        return "login"; // maps to login.html
+        return "login"; // maps to templates/login.html
     }
 }
