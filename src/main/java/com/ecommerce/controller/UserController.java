@@ -59,10 +59,10 @@ public class UserController {
     }
 
     // ✅ Display login page
-    @GetMapping("/login")
-    public String showLoginPage() {
-        return "login"; // templates/login.html
-    }
+  //  @GetMapping("/login")
+   // public String showLoginPage() {
+   //     return "login"; // templates/login.html
+  //  }
 
     // ✅ Display user dashboard
     @GetMapping("/user/dashboard")

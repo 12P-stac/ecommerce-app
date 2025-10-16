@@ -30,11 +30,11 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
-        model.addAttribute("user", new User());
-        return "register";
-    }
+   // @GetMapping("/register")
+   // public String showRegistrationForm(Model model) {
+       // model.addAttribute("user", new User());
+       // return "register";
+   // }
 
     @PostMapping("/register")
     public String registerUser(
