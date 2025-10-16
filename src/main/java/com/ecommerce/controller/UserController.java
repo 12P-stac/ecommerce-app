@@ -23,10 +23,9 @@ public class UserController {
     private PasswordEncoder passwordEncoder;
 
     // ✅ Display home page
-    @GetMapping("/")
-    public String home() {
-        return "index"; // templates/index.html
-    }
+   // @GetMapping("/")
+   // return "index"; // templates/index.html
+    //}
 
     // ✅ Display registration form
     @GetMapping("/register")
