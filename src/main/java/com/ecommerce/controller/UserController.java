@@ -71,9 +71,4 @@ public class UserController {
         return "user/dashboard"; // templates/user/dashboard.html
     }
 
-    // ✅ Display admin dashboard
-    @GetMapping("/admin/dashboard")
-    public String adminDashboard() {
-        return "admin/dashboard"; // templates/admin/dashboard.html
-    }
 }
