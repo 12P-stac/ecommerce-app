@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -29,6 +30,14 @@ public class AuthController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+    // ✅ GET mapping to show the registration page
+    @GetMapping("/register")
+    public String showRegistrationForm(Model model) {
+        model.addAttribute("user", new User());
+        return "register"; // templates/register.html
+    }
+
+    // ✅ POST mapping to handle registration submission
     @PostMapping("/register")
     public String registerUser(
             @RequestParam String firstName,
@@ -46,19 +55,17 @@ public class AuthController {
             return "register";
         }
 
-        // Check if username already exists
+        // Check if username or email exists
         if (userService.existsByUsername(username)) {
             model.addAttribute("error", "Username already exists");
             return "register";
         }
-
-        // Check if email already exists
         if (userService.existsByEmail(email)) {
             model.addAttribute("error", "Email already exists");
             return "register";
         }
 
-        // Create a new user
+        // Create new user
         User user = new User();
         user.setFirstName(firstName);
         user.setLastName(lastName);
@@ -76,7 +83,7 @@ public class AuthController {
         // Save user
         userService.save(user);
 
-        // Auto login after registration
+        // Auto-login
         try {
             request.login(username, password);
         } catch (ServletException e) {
