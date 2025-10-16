@@ -8,7 +8,6 @@ public class AdminController {
 
     @GetMapping("/admin/dashboard")
     public String adminDashboard() {
-        // points to src/main/resources/templates/admin/dashboard.html
-        return "admin/dashboard";
+        return "admin/dashboard"; // This loads templates/admin/dashboard.html
     }
 }

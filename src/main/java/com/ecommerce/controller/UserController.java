@@ -8,7 +8,6 @@ public class UserController {
 
     @GetMapping("/user/dashboard")
     public String userDashboard() {
-        // points to src/main/resources/templates/user/dashboard.html
-        return "user/dashboard";
+        return "user/dashboard"; // This loads templates/user/dashboard.html
     }
 }
