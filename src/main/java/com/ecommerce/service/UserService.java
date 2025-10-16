@@ -15,33 +15,33 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    // ✅ Fetch all users
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
+    // ✅ Find user by username
     public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username); // ✅ returns Optional<User>
+        return userRepository.findByUsername(username);
     }
 
+    // ✅ Save a new user or update existing one
     public void save(User user) {
         userRepository.save(user);
     }
 
+    // ✅ Check if email already exists
     public boolean existsByEmail(String email) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existsByEmail'");
+        return userRepository.existsByEmail(email);
     }
 
-    // Removed duplicate method existsByEmail(String username)
+    // ✅ Check if username already exists
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByUsername(username);
+    }
 
+    // ❌ Unused — remove or keep if you plan to use it later
     public List<Product> getAllUsers() {
-        // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getAllUsers'");
     }
-
-    public boolean existsByUsername(String username) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'existsByUsername'");
-    }
-    
 }
