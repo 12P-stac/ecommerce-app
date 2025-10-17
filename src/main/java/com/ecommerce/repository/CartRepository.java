@@ -1,7 +1,6 @@
 package com.ecommerce.repository;
 
 import com.ecommerce.model.CartItem;
-import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -17,30 +16,47 @@ import java.util.Optional;
 @Repository
 public interface CartRepository extends JpaRepository<CartItem, Long> {
 
-    // Your existing methods
+    // Your existing working methods
     List<CartItem> findByUser_Id(Long userId);
     void deleteByUser_IdAndProduct_Id(Long userId, Long productId);
     void deleteAllByUser_Id(Long userId);
     Page<CartItem> findByUser_Id(Long userId, Pageable pageable);
 
-    // Additional methods for CartService compatibility
-    List<CartItem> findByUser(User user);
+    // Fixed methods with proper query annotations (using IDs instead of entities)
+    @Query("SELECT c FROM CartItem c WHERE c.user.id = :userId")
+    List<CartItem> findByUserId(@Param("userId") Long userId);
     
-    Optional<CartItem> findByUserAndProduct(User user, Product product);
+    @Query("SELECT c FROM CartItem c WHERE c.user.id = :userId AND c.product.id = :productId")
+    Optional<CartItem> findByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
+    
+    // DELETE queries must use IDs, not entities
+    @Modifying
+    @Query("DELETE FROM CartItem c WHERE c.user.id = :userId AND c.product.id = :productId")
+    void deleteByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
     
     @Modifying
-    @Query("DELETE FROM CartItem c WHERE c.user = :user AND c.product = :product")
-    void deleteByUserAndProduct(@Param("user") User user, @Param("product") Product product);
+    @Query("DELETE FROM CartItem c WHERE c.user.id = :userId")
+    void deleteByUserId(@Param("userId") Long userId);
     
-    @Modifying
-    @Query("DELETE FROM CartItem c WHERE c.user = :user")
-    void deleteByUser(@Param("user") User user);
+    @Query("SELECT COUNT(c) FROM CartItem c WHERE c.user.id = :userId")
+    Integer countByUserId(@Param("userId") Long userId);
     
-    @Query("SELECT COUNT(c) FROM CartItem c WHERE c.user = :user")
-    Integer countByUser(@Param("user") User user);
+    @Query("SELECT SUM(c.quantity) FROM CartItem c WHERE c.user.id = :userId")
+    Integer sumQuantityByUserId(@Param("userId") Long userId);
     
-    @Query("SELECT SUM(c.quantity) FROM CartItem c WHERE c.user = :user")
-    Integer sumQuantityByUser(@Param("user") User user);
+    @Query("SELECT CASE WHEN COUNT(c) > 0 THEN true ELSE false END FROM CartItem c WHERE c.user.id = :userId AND c.product.id = :productId")
+    boolean existsByUserIdAndProductId(@Param("userId") Long userId, @Param("productId") Long productId);
     
-    boolean existsByUserAndProduct(User user, Product product);
+    // Convenience method that uses the ID-based method internally
+    default List<CartItem> findByUser(User user) {
+        return findByUserId(user.getId());
+    }
+    
+    default Optional<CartItem> findByUserAndProductId(User user, Long productId) {
+        return findByUserIdAndProductId(user.getId(), productId);
+    }
+    
+    default void deleteByUser(User user) {
+        deleteByUserId(user.getId());
+    }
 }

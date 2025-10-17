@@ -1,6 +1,7 @@
 package com.ecommerce.service;
 
 import com.ecommerce.model.CartItem;
+import com.ecommerce.model.CartItemDTO;
 import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
 import com.ecommerce.repository.CartRepository;
@@ -25,9 +26,6 @@ public class CartService {
     @Autowired
     private ProductService productService;
 
-    @Autowired
-    private UserService userService;
-
     /**
      * Add product to cart or update quantity if already exists
      */
@@ -41,7 +39,7 @@ public class CartService {
         }
         
         // Check if item already in cart
-        Optional<CartItem> existingCartItem = findByUserAndProduct(user, product);
+        Optional<CartItem> existingCartItem = cartRepository.findByUserIdAndProductId(user.getId(), productId);
         
         if (existingCartItem.isPresent()) {
             // Update quantity
@@ -67,16 +65,16 @@ public class CartService {
      * Get all cart items for a user
      */
     public List<CartItem> getCartItems(User user) {
-        return cartRepository.findByUser_Id(user.getId());
+        return cartRepository.findByUserId(user.getId());
     }
 
     /**
      * Get cart items as DTOs for frontend display
      */
-    public List<CartItem> getCartItemsAsDTO(User user) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
+    public List<CartItemDTO> getCartItemsAsDTO(User user) {
+        List<CartItem> cartItems = cartRepository.findByUserId(user.getId());
         return cartItems.stream()
-                .map(item -> new CartItem())
+                .map(item -> new CartItemDTO(item.getProduct(), item.getQuantity()))
                 .collect(Collectors.toList());
     }
 
@@ -84,7 +82,7 @@ public class CartService {
      * Remove specific product from user's cart
      */
     public void removeFromCart(User user, Long productId) {
-        cartRepository.deleteByUser_IdAndProduct_Id(user.getId(), productId);
+        cartRepository.deleteByUserIdAndProductId(user.getId(), productId);
     }
 
     /**
@@ -104,7 +102,7 @@ public class CartService {
             throw new RuntimeException("Not enough stock available. Available: " + product.getStockQuantity());
         }
         
-        Optional<CartItem> cartItem = findByUserAndProduct(user, product);
+        Optional<CartItem> cartItem = cartRepository.findByUserIdAndProductId(user.getId(), productId);
         if (cartItem.isPresent()) {
             CartItem item = cartItem.get();
             item.setQuantity(quantity);
@@ -118,63 +116,46 @@ public class CartService {
      * Clear all items from user's cart
      */
     public void clearCart(User user) {
-        cartRepository.deleteAllByUser_Id(user.getId());
+        cartRepository.deleteByUserId(user.getId());
     }
 
     /**
      * Get count of distinct products in cart
      */
     public Integer getCartItemCount(User user) {
-        return cartRepository.findByUser_Id(user.getId()).size();
+        return cartRepository.countByUserId(user.getId());
     }
 
     /**
      * Get total quantity of all items in cart
      */
     public Integer getTotalCartQuantity(User user) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
-        return cartItems.stream()
-                .mapToInt(CartItem::getQuantity)
-                .sum();
+        Integer total = cartRepository.sumQuantityByUserId(user.getId());
+        return total != null ? total : 0;
     }
 
     /**
      * Check if product is already in user's cart
      */
     public boolean isProductInCart(User user, Long productId) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
-        return cartItems.stream()
-                .anyMatch(item -> item.getProduct().getId().equals(productId));
+        return cartRepository.existsByUserIdAndProductId(user.getId(), productId);
     }
 
     /**
      * Get total price of all items in cart
      */
     public BigDecimal getCartTotal(User user) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
+        List<CartItem> cartItems = cartRepository.findByUserId(user.getId());
         return cartItems.stream()
                 .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
     /**
-     * Get cart item by product ID for a user (custom implementation)
+     * Get cart item by product ID for a user
      */
     public Optional<CartItem> getCartItemByProduct(User user, Long productId) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
-        return cartItems.stream()
-                .filter(item -> item.getProduct().getId().equals(productId))
-                .findFirst();
-    }
-
-    /**
-     * Custom method to find cart item by user and product
-     */
-    private Optional<CartItem> findByUserAndProduct(User user, Product product) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
-        return cartItems.stream()
-                .filter(item -> item.getProduct().getId().equals(product.getId()))
-                .findFirst();
+        return cartRepository.findByUserIdAndProductId(user.getId(), productId);
     }
 
     /**
@@ -188,7 +169,7 @@ public class CartService {
      * Validate cart items (check stock, availability, etc.)
      */
     public boolean validateCart(User user) {
-        List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
+        List<CartItem> cartItems = cartRepository.findByUserId(user.getId());
         
         for (CartItem item : cartItems) {
             Product product = item.getProduct();
