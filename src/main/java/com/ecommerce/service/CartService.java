@@ -58,7 +58,7 @@ public class CartService {
             return cartRepository.save(cartItem);
         } else {
             // Add new item
-            CartItem cartItem = new CartItem(product, quantity);
+            CartItem cartItem = new CartItem();
             return cartRepository.save(cartItem);
         }
     }
@@ -76,7 +76,7 @@ public class CartService {
     public List<CartItem> getCartItemsAsDTO(User user) {
         List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
         return cartItems.stream()
-                .map(item -> new CartItem(item.getProduct(), item.getQuantity()))
+                .map(item -> new CartItem())
                 .collect(Collectors.toList());
     }
 
@@ -153,7 +153,7 @@ public class CartService {
     public BigDecimal getCartTotal(User user) {
         List<CartItem> cartItems = cartRepository.findByUser_Id(user.getId());
         return cartItems.stream()
-                .map(CartItem::getSubtotal)
+                .map(item -> item.getProduct().getPrice().multiply(BigDecimal.valueOf(item.getQuantity())))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
     }
 
