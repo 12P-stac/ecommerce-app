@@ -3,22 +3,22 @@ package com.ecommerce.model;
 import jakarta.persistence.*;
 import java.util.List;
 
-@Entity
-@Table(name = "carts")
+// @Entity  // REMOVE THIS LINE
+// @Table(name = "carts")  // REMOVE THIS LINE
 public class Cart {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    // @Id  // REMOVE THIS LINE
+    // @GeneratedValue(strategy = GenerationType.IDENTITY)  // REMOVE THIS LINE
     private Long id;
 
-    @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)
+    // @OneToMany(mappedBy = "cart", cascade = CascadeType.ALL, orphanRemoval = true)  // REMOVE THIS LINE
     private List<CartItem> items;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
+    // @ManyToOne  // REMOVE THIS LINE
+    // @JoinColumn(name = "user_id")  // REMOVE THIS LINE
     private User user;
 
-    // Getters and Setters
+    // Getters and Setters remain
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 
