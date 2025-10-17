@@ -1,7 +1,6 @@
 package com.ecommerce.controller;
 
 import com.ecommerce.model.CartItem;
-import com.ecommerce.model.UserDTO;
 import com.ecommerce.model.User;
 import com.ecommerce.repository.CartRepository;
 import com.ecommerce.repository.ProductRepository;
@@ -49,7 +48,7 @@ public class CartItemController {
                             @RequestParam int quantity) {
 
         Optional<User> userOpt = Optional.empty();
-        Optional<UserDTO> productOpt = Optional.empty();
+        Optional<User> productOpt = Optional.empty();
 
         if (userOpt.isEmpty() || productOpt.isEmpty() || quantity <= 0) {
             return "redirect:/error";

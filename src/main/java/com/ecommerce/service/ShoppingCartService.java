@@ -3,6 +3,8 @@ package com.ecommerce.service;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.annotation.SessionScope;
 
+import com.ecommerce.model.User;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -14,7 +16,7 @@ public class ShoppingCartService {
     private final Map<Long, Integer> cartItems = new HashMap<>();
 
     // ✅ Add a product to the cart
-    public void addProduct(UserDTO product, int quantity) {
+    public void addProduct(User product, int quantity) {
         if (product == null || product.getId() == null) {
             throw new IllegalArgumentException("Product or product ID cannot be null");
         }
@@ -50,18 +52,7 @@ public class ShoppingCartService {
         return cartItems.values().stream().mapToInt(Integer::intValue).sum();
     }
 
-    // ✅ Calculate total cost safely
-    public BigDecimal getTotalAmount(Map<Long, UserDTO> productMap) {
-        return cartItems.entrySet().stream()
-                .map(entry -> {
-                    UserDTO product = productMap.get(entry.getKey());
-                    BigDecimal price = (product != null && product.getPrice() != null)
-                            ? product.getPrice()
-                            : BigDecimal.ZERO;
-                    return price.multiply(BigDecimal.valueOf(entry.getValue()));
-                })
-                .reduce(BigDecimal.ZERO, BigDecimal::add);
-    }
+    
 
     // ✅ Check if cart is empty
     public boolean isEmpty() {

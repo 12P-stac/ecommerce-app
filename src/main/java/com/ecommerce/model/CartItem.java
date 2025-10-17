@@ -23,7 +23,7 @@ public class CartItem {
     }
 
     public User getUser() {
-        // TODO Auto-generated method stub
+    
         throw new UnsupportedOperationException("Unimplemented method 'getUser'");
     }
 }
