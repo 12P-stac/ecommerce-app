@@ -1,24 +1,19 @@
 package com.ecommerce.model;
 
 import jakarta.persistence.*;
-import java.util.Set;
 
 @Entity
 @Table(name = "roles")
 public class Role {
-
+    
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    @Column(unique = true, nullable = false)
-    private String name;
+    @Column(unique = true, nullable = false, length = 20)
+    private String name;  // Remove @Enumerated annotation since we're using String
 
     private String description;
-
-    @ManyToMany(mappedBy = "roles")
-    private Set<User> users;
 
     // Constructors
     public Role() {}
@@ -31,12 +26,10 @@ public class Role {
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
+
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
-
-    public Set<User> getUsers() { return users; }
-    public void setUsers(Set<User> users) { this.users = users; }
 }

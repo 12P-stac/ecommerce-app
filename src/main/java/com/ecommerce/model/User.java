@@ -148,7 +148,6 @@ public class User {
     public LocalDateTime getUpdatedAt() { return updatedAt; }
     public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }
 
-    // Corrected getter/setter names
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
 
