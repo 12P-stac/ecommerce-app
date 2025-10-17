@@ -1,5 +1,5 @@
 package com.ecommerce.controller;
-import com.ecommerce.model.CartItem;
+import com.ecommerce.model.CartItemDTO;
 import com.ecommerce.model.User;
 import com.ecommerce.service.CartService;
 import com.ecommerce.service.UserService;
@@ -28,11 +28,13 @@ public class CartController {
         User user = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
         
-        List<Object> cartItems = cartService.getCartItemsWithProductDetails(user);
+        List<CartItemDTO> cartItems = cartService.getCartItemsAsDTO(user);
         Integer cartItemCount = cartService.getCartItemCount(user);
+        Double cartTotal = cartService.getCartTotal(user).doubleValue();
         
         model.addAttribute("cartItems", cartItems);
         model.addAttribute("cartItemCount", cartItemCount);
+        model.addAttribute("cartTotal", cartTotal);
         model.addAttribute("user", user);
         
         return "cart/view";
