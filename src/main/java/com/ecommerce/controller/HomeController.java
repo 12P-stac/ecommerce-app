@@ -23,11 +23,9 @@ public class HomeController {
 
     @GetMapping("/login")
     public String login(Authentication auth) {
+        // Remove the redirect logic here - let Spring Security handle it
         if (auth != null && auth.isAuthenticated()) {
-            Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
-            if (roles.contains("ROLE_ADMIN")) return "redirect:/admin/dashboard";
-            if (roles.contains("ROLE_SELLER")) return "redirect:/seller/dashboard";
-            if (roles.contains("ROLE_USER")) return "redirect:/user/dashboard";
+            return "redirect:/"; // Let home method handle the redirect
         }
         return "login";
     }

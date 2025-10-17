@@ -8,6 +8,8 @@ import com.ecommerce.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -33,7 +35,11 @@ public class RegistrationController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/register")
-    public String showRegistrationForm(Model model) {
+    public String showRegistrationForm(Model model, Authentication auth) {
+        // If user is already logged in, redirect to appropriate dashboard
+        if (auth != null && auth.isAuthenticated()) {
+            return redirectByRole(auth);
+        }
         model.addAttribute("user", new User());
         return "register";
     }
@@ -58,19 +64,16 @@ public class RegistrationController {
         // Check password match
         if (!password.equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match");
-            model.addAttribute("user", new User());
             return "register";
         }
 
         // Check if username or email exists
         if (userService.usernameExists(username)) {
             model.addAttribute("error", "Username already exists");
-            model.addAttribute("user", new User());
             return "register";
         }
         if (userService.emailExists(email)) {
             model.addAttribute("error", "Email already exists");
-            model.addAttribute("user", new User());
             return "register";
         }
 
@@ -86,7 +89,7 @@ public class RegistrationController {
             user.setActive(true);
             user.setEmailVerified(false);
 
-            // Assign role based on user type using String-based roles
+            // Assign role based on user type
             Set<Role> roles = new HashSet<>();
             
             if ("seller".equals(userType)) {
@@ -94,12 +97,10 @@ public class RegistrationController {
                         .orElseThrow(() -> new RuntimeException("Seller role not found"));
                 roles.add(sellerRole);
                 
-                // Set seller-specific fields
                 user.setStoreName(storeName);
                 user.setBusinessType(businessType);
                 user.setTaxId(taxId);
             } else {
-                // Default to USER role
                 Role userRole = roleRepository.findByName("ROLE_USER")
                         .orElseThrow(() -> new RuntimeException("User role not found"));
                 roles.add(userRole);
@@ -113,24 +114,25 @@ public class RegistrationController {
             // Auto-login after registration
             try {
                 request.login(username, password);
+                // After successful login, redirect based on role
+                return "redirect:/"; // Let HomeController handle the role-based redirect
             } catch (ServletException e) {
-                // If auto-login fails, redirect to login page with success message
                 redirectAttributes.addFlashAttribute("success", 
                     "Registration successful! Please login to continue.");
                 return "redirect:/login";
             }
 
-            // Redirect to appropriate dashboard based on role
-            if ("seller".equals(userType)) {
-                return "redirect:/seller/dashboard";
-            } else {
-                return "redirect:/user/dashboard";
-            }
-
         } catch (Exception e) {
             model.addAttribute("error", "Registration failed: " + e.getMessage());
-            model.addAttribute("user", new User());
             return "register";
         }
+    }
+
+    private String redirectByRole(Authentication auth) {
+        Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
+        if (roles.contains("ROLE_ADMIN")) return "redirect:/admin/dashboard";
+        if (roles.contains("ROLE_SELLER")) return "redirect:/seller/dashboard";
+        if (roles.contains("ROLE_USER")) return "redirect:/user/dashboard";
+        return "redirect:/login";
     }
 }
