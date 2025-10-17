@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import java.util.List;
 
 import com.ecommerce.model.Role;
+import com.ecommerce.model.RoleName;
 
 @Configuration
 public class PasswordMigrationConfig {
@@ -21,10 +22,11 @@ public class PasswordMigrationConfig {
             List<Role> users = userRepository.findAll();
             for (Role u : users) {
                 String rawPassword = u.getName();
-                if (!rawPassword.startsWith("$2a$")) { // Not encoded yet
+                String encodedPassword = passwordEncoder.encode(rawPassword.toString());
+                u.setName(encodedPassword);
                     
                 }
-            }
+            
             userRepository.saveAll(users);
             System.out.println("Password migration completed!");
         };

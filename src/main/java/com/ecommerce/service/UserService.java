@@ -1,47 +1,57 @@
 package com.ecommerce.service;
 
-import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
 import com.ecommerce.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserService {
-
+    
     @Autowired
     private UserRepository userRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
-    // ✅ Fetch all users
+    public User save(User user) {
+        return userRepository.save(user);
+    }
+    
+    public boolean usernameExists(String username) {
+        return userRepository.existsByUsername(username);
+    }
+    
+    public boolean emailExists(String email) {
+        return userRepository.existsByEmail(email);
+    }
+    
+    public Optional<User> findByUsername(String username) {
+        return userRepository.findByUsername(username);
+    }
+    
+    public Optional<User> findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+    
     public List<User> findAll() {
         return userRepository.findAll();
     }
 
-    // ✅ Find user by username
-    public Optional<User> findByUsername(String username) {
-        return userRepository.findByUsername(username);
-    }
-
-    // ✅ Save a new user or update existing one
-    public void save(User user) {
-        userRepository.save(user);
-    }
-
-    // ✅ Check if email already exists
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
-
-    // ✅ Check if username already exists
+    // Alias methods for compatibility with your existing code
     public boolean existsByUsername(String username) {
-        return userRepository.existsByUsername(username);
+        return usernameExists(username);
     }
 
-    // ❌ Unused — remove or keep if you plan to use it later
-    public List<Product> getAllUsers() {
-        throw new UnsupportedOperationException("Unimplemented method 'getAllUsers'");
+    public boolean existsByEmail(String email) {
+        return emailExists(email);
     }
+    // Add these methods to your existing UserService class
+public Optional<User> findById(Long id) {
+    return userRepository.findById(id);
+}
+
 }

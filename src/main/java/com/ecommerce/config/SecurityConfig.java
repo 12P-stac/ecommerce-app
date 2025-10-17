@@ -1,7 +1,7 @@
 package com.ecommerce.config;
 
+import com.ecommerce.security.CustomLoginSuccessHandler;
 import com.ecommerce.service.CustomUserDetailsService;
-import com.ecommerce.service.CustomLoginSuccessHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -9,15 +9,13 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 
 @Configuration
 public class SecurityConfig {
 
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
-    @Autowired
-    private CustomLoginSuccessHandler loginSuccessHandler;
 
     // Password encoder bean
     @Bean
@@ -34,13 +32,19 @@ public class SecurityConfig {
         return provider;
     }
 
+    // Custom success handler for role-based redirects
+    @Bean
+    public AuthenticationSuccessHandler successHandler() {
+        return new CustomLoginSuccessHandler();
+    }
+
     // Main security filter chain
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             // Authorization rules
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**").permitAll()
+                .requestMatchers("/", "/home", "/register", "/login", "/css/**", "/js/**", "/images/**", "/webjars/**").permitAll()
                 .requestMatchers("/admin/**").hasRole("ADMIN")
                 .requestMatchers("/seller/**").hasRole("SELLER")
                 .requestMatchers("/user/**").hasRole("USER")
@@ -49,17 +53,28 @@ public class SecurityConfig {
             // Login configuration
             .formLogin(form -> form
                 .loginPage("/login")
-                .successHandler(loginSuccessHandler)
+                .loginProcessingUrl("/login")
+                .successHandler(successHandler())
+                .failureUrl("/login?error=true")
                 .permitAll()
             )
             // Logout configuration
             .logout(logout -> logout
                 .logoutUrl("/logout")
-                .logoutSuccessUrl("/")  // redirect to homepage after logout
+                .logoutSuccessUrl("/login?logout=true")
+                .invalidateHttpSession(true)
+                .deleteCookies("JSESSIONID")
                 .permitAll()
             )
-            // Disable CSRF for simplicity (optional)
-            .csrf(csrf -> csrf.disable());
+            // Exception handling
+            .exceptionHandling(exception -> exception
+                .accessDeniedPage("/access-denied")
+            )
+            // Remember me configuration
+            .rememberMe(remember -> remember
+                .key("uniqueAndSecret")
+                .tokenValiditySeconds(86400) // 24 hours
+            );
 
         return http.build();
     }

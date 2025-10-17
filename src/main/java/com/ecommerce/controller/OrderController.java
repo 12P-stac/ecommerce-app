@@ -43,7 +43,7 @@ public class OrderController {
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-        List<Order> orders = orderService.getOrdersByUser(user.getId());
+        List<Order> orders = orderService.getOrderByNumber(user.getId());
         model.addAttribute("orders", orders);
         return "orders"; // orders.html
     }
@@ -58,7 +58,8 @@ public class OrderController {
     @PostMapping("/admin/update-status")
     public String updateOrderStatus(@RequestParam("orderId") Long orderId,
                                     @RequestParam("status") String status) {
-        orderService.updateStatus(orderId, status);
+        
+        orderService.updateOrderStatus(orderId, status);
         return "redirect:/orders/admin";
     }
 }

@@ -19,14 +19,14 @@ public class ProductController {
 
     @GetMapping
     public String listProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllActiveProducts();
         model.addAttribute("products", products);
         return "products"; // products.html
     }
 
     @GetMapping("/admin")
     public String adminProducts(Model model) {
-        List<Product> products = productService.getAllProducts();
+        List<Product> products = productService.getAllActiveProducts();
         model.addAttribute("products", products);
         return "admin/products"; // admin/products.html
     }

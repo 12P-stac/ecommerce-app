@@ -1,93 +1,477 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Login | Ecommerce App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login | EcommercePro</title>
+    
+    <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
     <style>
+        :root {
+            --primary: #2c5aa0;
+            --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-hover: linear-gradient(135deg, #764ba2 0%, #667eea 100%);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            background: linear-gradient(135deg, #4a90e2, #9013fe);
+            font-family: 'Inter', sans-serif;
+            background: var(--gradient);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        body::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTIwMCA4MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjAzIj48Y2lyY2xlIGN4PSI0MDAiIGN5PSI0MDAiIHI9IjE1MCIvPjxjaXJjbGUgY3g9IjgwMCIgY3k9IjIwMCIgcj0iMTAwIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNjAwIiByPSIxMjAiLz48Y2lyY2xlIGN4PSIxMTAwIiBjeT0iNTAwIiByPSI4MCIvPjwvZz48L3N2Zz4=');
+            opacity: 0.1;
+            z-index: 0;
+        }
+
+        .login-container {
+            position: relative;
+            z-index: 1;
+            width: 100%;
+            max-width: 440px;
         }
 
         .login-card {
             background: #fff;
             border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-            padding: 40px 30px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            padding: 50px 40px;
             width: 100%;
-            max-width: 400px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
         }
 
-        .login-card h3 {
+        .login-header {
             text-align: center;
-            font-weight: bold;
-            color: #4a4a4a;
-            margin-bottom: 30px;
+            margin-bottom: 40px;
         }
 
-        .btn-primary {
-            background-color: #4a90e2;
+        .login-header h2 {
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-size: 2rem;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .brand-logo {
+            font-size: 2.5rem;
+            color: var(--primary);
+            margin-bottom: 15px;
+        }
+
+        .form-floating {
+            margin-bottom: 20px;
+        }
+
+        .form-control {
+            border-radius: 12px;
+            padding: 16px 20px;
+            border: 2px solid #e1e5e9;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 0.2rem rgba(44, 90, 160, 0.25);
+        }
+
+        .form-label {
+            font-weight: 500;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .btn-login {
+            background: var(--gradient);
             border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            margin-top: 10px;
         }
 
-        .btn-primary:hover {
-            background-color: #357abd;
+        .btn-login:hover {
+            background: var(--gradient-hover);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
         }
 
-        .btn-outline-secondary:hover {
-            background-color: #f2f2f2;
+        .btn-register {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            border-radius: 12px;
+            padding: 16px;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
         }
 
-        .text-link {
+        .btn-register:hover {
+            background: var(--primary);
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .form-options {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 25px 0;
+        }
+
+        .form-check-input:checked {
+            background-color: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .forgot-password {
+            color: var(--primary);
             text-decoration: none;
-            color: #4a90e2;
+            font-weight: 500;
+            transition: color 0.3s ease;
         }
 
-        .text-link:hover {
+        .forgot-password:hover {
+            color: #1e3d72;
             text-decoration: underline;
+        }
+
+        .divider {
+            text-align: center;
+            margin: 30px 0;
+            position: relative;
+            color: #666;
+        }
+
+        .divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e1e5e9;
+            z-index: 1;
+        }
+
+        .divider span {
+            background: white;
+            padding: 0 15px;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Alert Styles */
+        .alert {
+            border-radius: 12px;
+            border: none;
+            padding: 16px 20px;
+            margin-bottom: 25px;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .alert-danger {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .alert-warning {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .alert-dismissible .btn-close {
+            padding: 1rem;
+        }
+
+        /* Password toggle */
+        .password-toggle {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            color: #666;
+            cursor: pointer;
+            z-index: 3;
+        }
+
+        .password-input-group {
+            position: relative;
+        }
+
+        /* Responsive */
+        @media (max-width: 576px) {
+            .login-card {
+                padding: 40px 25px;
+                margin: 10px;
+            }
+
+            .login-header h2 {
+                font-size: 1.75rem;
+            }
+
+            .form-options {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+        }
+
+        /* Loading state */
+        .btn-loading {
+            position: relative;
+            color: transparent;
+        }
+
+        .btn-loading::after {
+            content: '';
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            top: 50%;
+            left: 50%;
+            margin-left: -10px;
+            margin-top: -10px;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            border-right-color: transparent;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <div class="login-card">
-        <h3>Login to Your Account</h3>
-        <form th:action="@{/login}" method="post">
-            <div class="mb-3">
-                <label for="username" class="form-label">Username or Email</label>
-                <input type="text" id="username" name="username" class="form-control" placeholder="Enter your username or email" required>
-            </div>
-
-            <div class="mb-3">
-                <label for="password" class="form-label">Password</label>
-                <input type="password" id="password" name="password" class="form-control" placeholder="Enter your password" required>
-            </div>
-
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <div>
-                    <input type="checkbox" id="remember-me" name="remember-me">
-                    <label for="remember-me">Remember me</label>
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Header -->
+            <div class="login-header">
+                <div class="brand-logo">
+                    <i class="fas fa-store"></i>
                 </div>
-                <a href="#" class="text-link">Forgot password?</a>
+                <h2>Welcome Back</h2>
+                <p>Sign in to your EcommercePro account</p>
             </div>
 
+            <!-- Success Messages -->
+            <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                <span th:text="${success}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Registration Success -->
+            <div th:if="${param.registered}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                Registration successful! Please log in to continue.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Email Verification Success -->
+            <div th:if="${param.verified}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-check-circle me-2"></i>
+                Email verified successfully! You can now log in.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Error Messages -->
+            <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:text="${error}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Spring Security Error Messages -->
+            <div th:if="${param.error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+                <i class="fas fa-exclamation-triangle me-2"></i>
+                <span th:if="${param.error == 'invalid_credentials'}">Invalid username or password.</span>
+                <span th:if="${param.error == 'disabled'}">Your account is disabled. Please contact support.</span>
+                <span th:if="${param.error == 'locked'}">Your account is locked. Please try again later.</span>
+                <span th:if="${param.error == 'unverified'}">Please verify your email before logging in.</span>
+                <span th:if="${param.error == 'default'}">Login failed. Please try again.</span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Logout Message -->
+            <div th:if="${param.logout}" class="alert alert-success alert-dismissible fade show" role="alert">
+                <i class="fas fa-info-circle me-2"></i>
+                You have been logged out successfully.
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+
+            <!-- Login Form -->
+            <form th:action="@{/login}" method="post" id="loginForm">
+                <!-- Username/Email Field -->
+                <div class="form-floating">
+                    <input type="text" 
+                           class="form-control" 
+                           id="username" 
+                           name="username"
+                           placeholder="Enter your username or email"
+                           required
+                           autofocus
+                           autocomplete="username">
+                    <label for="username">
+                        <i class="fas fa-user me-2"></i>Username or Email
+                    </label>
+                </div>
+
+                <!-- Password Field -->
+                <div class="form-floating">
+                    <div class="password-input-group">
+                        <input type="password" 
+                               class="form-control" 
+                               id="password" 
+                               name="password"
+                               placeholder="Enter your password"
+                               required
+                               autocomplete="current-password">
+                        <label for="password">
+                            <i class="fas fa-lock me-2"></i>Password
+                        </label>
+                        <button type="button" class="password-toggle" id="togglePassword">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Options -->
+                <div class="form-options">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" id="remember-me" name="remember-me">
+                        <label class="form-check-label" for="remember-me">
+                            Remember me
+                        </label>
+                    </div>
+                    <a th:href="@{/forgot-password}" class="forgot-password">
+                        Forgot password?
+                    </a>
+                </div>
+
+                <!-- Submit Button -->
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-login" id="loginBtn">
+                        <i class="fas fa-sign-in-alt me-2"></i>Sign In
+                    </button>
+                </div>
+            </form>
+
+            <!-- Divider -->
+            <div class="divider">
+                <span>New to EcommercePro?</span>
+            </div>
+
+            <!-- Register Button -->
             <div class="d-grid">
-                <button type="submit" class="btn btn-primary">Login</button>
+                <a th:href="@{/register}" class="btn btn-register">
+                    <i class="fas fa-user-plus me-2"></i>Create New Account
+                </a>
             </div>
 
-            <hr>
-
-            <div class="d-grid mb-2">
-                <a th:href="@{/register}" class="btn btn-outline-secondary">Create an Account</a>
+            <!-- Footer Links -->
+            <div class="text-center mt-4">
+                <small class="text-muted">
+                    By continuing, you agree to our 
+                    <a href="#" class="forgot-password">Terms of Service</a> and 
+                    <a href="#" class="forgot-password">Privacy Policy</a>
+                </small>
             </div>
-
-            <div class="text-center mt-3">
-                <small>By logging in, you agree to our <a href="#" class="text-link">Terms</a> & <a href="#" class="text-link">Privacy Policy</a>.</small>
-            </div>
-        </form>
+        </div>
     </div>
+
+    <!-- Bootstrap & JavaScript -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Password visibility toggle
+        document.getElementById('togglePassword').addEventListener('click', function() {
+            const passwordInput = document.getElementById('password');
+            const icon = this.querySelector('i');
+            
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        });
+
+        // Form submission loading state
+        document.getElementById('loginForm').addEventListener('submit', function() {
+            const loginBtn = document.getElementById('loginBtn');
+            loginBtn.classList.add('btn-loading');
+            loginBtn.disabled = true;
+        });
+
+        // Auto-hide alerts after 5 seconds
+        setTimeout(() => {
+            const alerts = document.querySelectorAll('.alert');
+            alerts.forEach(alert => {
+                const bsAlert = new bootstrap.Alert(alert);
+                bsAlert.close();
+            });
+        }, 5000);
+
+        // Enhanced input validation
+        document.addEventListener('DOMContentLoaded', function() {
+            const inputs = document.querySelectorAll('input[required]');
+            inputs.forEach(input => {
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        this.classList.add('is-invalid');
+                    } else {
+                        this.classList.remove('is-invalid');
+                    }
+                });
+            });
+        });
+    </script>
 </body>
 </html>

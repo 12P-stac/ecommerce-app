@@ -55,7 +55,7 @@ public class CartItemController {
             return "redirect:/error";
         }
 
-        CartItem cartItem = new CartItem();
+        CartItem cartItem = new CartItem(null, quantity);
         cartRepository.save(cartItem);
 
         return "redirect:/cart/user/" + userId;

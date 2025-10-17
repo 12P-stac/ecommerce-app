@@ -1,45 +1,87 @@
 package com.ecommerce.service;
 
-import com.ecommerce.model.Order;
-import com.ecommerce.model.User;
+import com.ecommerce.model.*;
+import com.ecommerce.model.Order.OrderStatus;
 import com.ecommerce.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class OrderService {
-
+    
     @Autowired
     private OrderRepository orderRepository;
-
-    public Order createOrder(User user, BigDecimal totalAmount) {
+    
+    @Autowired
+    private ProductService productService;
+    
+    public Order createOrder(User user, List<CartItem> cartItems, String shippingAddress, String paymentMethod) {
         Order order = new Order();
         order.setUser(user);
+        order.setShippingAddress(shippingAddress);
+        order.setPaymentMethod(paymentMethod);
+        
+        BigDecimal totalAmount = BigDecimal.ZERO;
+        
+        for (CartItem cartItem : cartItems) {
+            OrderItem orderItem = new OrderItem();
+            orderItem.setOrder(order);
+            orderItem.setProduct(cartItem.getProduct());
+            orderItem.setQuantity(cartItem.getQuantity());
+            orderItem.setPrice(cartItem.getProduct().getPrice());
+            
+            order.getOrderItems().add(orderItem);
+            totalAmount = totalAmount.add(orderItem.getSubtotal());
+        }
+        
         order.setTotalAmount(totalAmount);
-        order.setStatus("Pending");
         return orderRepository.save(order);
     }
-
-    public List<Order> getOrdersByUser(Long userId) {
-        return orderRepository.findByUserId(userId);
+    
+    public List<Order> getUserOrders(User user) {
+        return orderRepository.findByUserOrderByCreatedAtDesc(user);
+    }
+    
+    public List<Order> getSellerOrders(User seller) {
+        return orderRepository.findOrdersBySellerId(seller.getId());
+    }
+    
+    public Optional<Order> getOrderByNumber(String orderNumber) {
+        return orderRepository.findByOrderNumber(orderNumber);
+    }
+    
+    public Order updateOrderStatus(Long orderId, String status) {
+        Optional<Order> orderOpt = orderRepository.findById(orderId);
+        if (orderOpt.isPresent()) {
+            Order order = orderOpt.get();
+            order.setStatus(status);
+            return orderRepository.save(order);
+        }
+        throw new RuntimeException("Order not found");
+    }
+    
+    public Long countUserOrders(User user) {
+        return orderRepository.countOrdersByUser(user.getId());
+    }
+    
+    public Long countPendingOrdersBySeller(User seller) {
+        return orderRepository.countOrdersBySellerAndStatus(seller.getId(), OrderStatus.PENDING);
     }
 
-    public List<Order> getOrdersByStatus(String status) {
-        return orderRepository.findByStatus(status);
+    public void createOrder(User user, BigDecimal totalAmount) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'createOrder'");
     }
 
-    public Optional<Order> getOrderById(Long id) {
-        return orderRepository.findById(id);
+    public List<Order> getOrdersByStatus(String string) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getOrdersByStatus'");
     }
-
-    public void updateStatus(Long orderId, String status) {
-        Order order = orderRepository.findById(orderId)
-                .orElseThrow(() -> new RuntimeException("Order not found"));
-        order.setStatus(status);
-        orderRepository.save(order);
+public List<Order> getOrderByNumber(Long id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getOrderByNumber'");
     }
 }

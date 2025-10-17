@@ -1,36 +1,44 @@
 package com.ecommerce.service;
 
 import com.ecommerce.model.Product;
+import com.ecommerce.model.User;
 import com.ecommerce.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
 @Service
 public class ProductService {
-
+    
     @Autowired
     private ProductRepository productRepository;
-
-    // Get all products
-    public List<Product> getAllProducts() {
-        return productRepository.findAll();
+    
+    public Product saveProduct(Product product) {
+        return productRepository.save(product);
     }
-
-    // Save or update a product
-    public void saveProduct(Product product) {
-        productRepository.save(product);
+    
+    public List<Product> getActiveProductsBySeller(User seller) {
+        return productRepository.findBySellerAndActiveTrue(seller);
     }
-
-    // Find a product by ID
+    
+    public List<Product> getAllActiveProducts() {
+        return productRepository.findByActiveTrue();
+    }
+    
     public Optional<Product> getProductById(Long id) {
         return productRepository.findById(id);
     }
-
-    // Delete a product by ID
+    
     public void deleteProduct(Long id) {
         productRepository.deleteById(id);
+    }
+    
+    public Long countActiveProductsBySeller(User seller) {
+        return productRepository.countActiveProductsBySeller(seller.getId());
+    }
+    
+    public List<Product> getProductsByCategory(String category) {
+        return productRepository.findByCategoryAndActiveTrue(category);
     }
 }

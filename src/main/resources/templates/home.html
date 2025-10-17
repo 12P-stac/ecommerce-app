@@ -6,7 +6,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>EcommercePro | Home</title>
+    <title>EcommercePro | Build, Sell, and Grow Your Online Business</title>
+    <meta name="description" content="EcommercePro - The complete e-commerce solution to build, manage, and scale your online store with powerful features and analytics.">
 
     <!-- Bootstrap 5 -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -19,147 +20,872 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
           rel="stylesheet">
 
+    <!-- AOS Animation Library -->
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+
     <style>
         :root {
             --primary: #2c5aa0;
+            --primary-dark: #1e3d72;
+            --secondary: #ff6b6b;
             --gradient: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            --gradient-secondary: linear-gradient(135deg, #ff6b6b 0%, #feca57 100%);
+            --light-bg: #f8f9fa;
+            --dark-text: #2d3748;
+            --light-text: #718096;
+            --white: #ffffff;
+            --shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
         body {
             font-family: 'Inter', sans-serif;
+            color: var(--dark-text);
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        .hero-section {
-            background: var(--gradient);
-            color: white;
-            padding: 100px 0;
+        h1, h2, h3, h4, h5, h6 {
+            font-weight: 700;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+        }
+
+        .section-padding {
+            padding: 80px 0;
+        }
+
+        .btn {
+            font-weight: 500;
+            border-radius: 8px;
+            padding: 12px 28px;
+            transition: var(--transition);
+            border: none;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .btn-primary {
             background: var(--gradient);
-            border: none;
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
         }
 
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+            color: var(--white);
+        }
+
+        .btn-secondary {
+            background: var(--gradient-secondary);
+            color: var(--white);
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+            color: var(--white);
+        }
+
+        .btn-outline-primary {
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            background: transparent;
+        }
+
+        .btn-outline-primary:hover {
+            background: var(--primary);
+            color: var(--white);
+        }
+
+        /* Navbar */
+        .navbar {
+            padding: 20px 0;
+            transition: var(--transition);
+            background: var(--white) !important;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .navbar.scrolled {
+            padding: 12px 0;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 24px;
+            color: var(--primary) !important;
+        }
+
+        .nav-link {
+            font-weight: 500;
+            margin: 0 10px;
+            color: var(--dark-text) !important;
+            position: relative;
+        }
+
+        .nav-link:after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 2px;
+            bottom: 0;
+            left: 0;
+            background: var(--gradient);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover:after,
+        .nav-link.active:after {
+            width: 100%;
+        }
+
+        /* Hero Section */
+        .hero-section {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 160px 0 120px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTIwMCA4MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjAzIj48Y2lyY2xlIGN4PSI0MDAiIGN5PSI0MDAiIHI9IjE1MCIvPjxjaXJjbGUgY3g9IjgwMCIgY3k9IjIwMCIgcj0iMTAwIi8+PGNpcmNsZSBjeD0iMTAwIiBjeT0iNjAwIiByPSIxMjAiLz48Y2lyY2xlIGN4PSIxMTAwIiBjeT0iNTAwIiByPSI4MCIvPjwvZz48L3N2Zz4=');
+            opacity: 0.1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 1.5rem;
+            line-height: 1.1;
+        }
+
+        .hero-subtitle {
+            font-size: 1.25rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        /* Features Section */
+        .features-section {
+            background: var(--white);
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+            text-align: center;
+        }
+
+        .section-subtitle {
+            color: var(--light-text);
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 4rem;
+            font-size: 1.1rem;
+        }
+
+        .feature-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: 100%;
+            border: 1px solid rgba(0, 0, 0, 0.03);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
         }
 
         .feature-icon {
-            width: 70px;
-            height: 70px;
+            width: 80px;
+            height: 80px;
             background: var(--gradient);
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto 20px;
+            margin: 0 auto 25px;
+            transition: var(--transition);
+        }
+
+        .feature-card:hover .feature-icon {
+            transform: scale(1.1);
         }
 
         .feature-icon i {
-            font-size: 28px;
-            color: white;
+            font-size: 32px;
+            color: var(--white);
+        }
+
+        .feature-title {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        .feature-text {
+            color: var(--light-text);
+        }
+
+        /* Solutions Section */
+        .solutions-section {
+            background: var(--light-bg);
+        }
+
+        .solution-card {
+            background: var(--white);
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            height: 100%;
+        }
+
+        .solution-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .solution-img {
+            height: 200px;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-size: 48px;
+        }
+
+        .solution-content {
+            padding: 30px;
+        }
+
+        .solution-title {
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+        }
+
+        .solution-text {
+            color: var(--light-text);
+            margin-bottom: 20px;
+        }
+
+        /* Testimonials */
+        .testimonials-section {
+            background: var(--white);
+        }
+
+        .testimonial-card {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin: 15px;
+            position: relative;
+        }
+
+        .testimonial-card:before {
+            content: '"';
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 80px;
+            color: rgba(0, 0, 0, 0.05);
+            font-family: Georgia, serif;
+            line-height: 1;
+        }
+
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 20px;
+            color: var(--dark-text);
+        }
+
+        .testimonial-author {
+            display: flex;
+            align-items: center;
+        }
+
+        .testimonial-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .author-info h5 {
+            margin-bottom: 5px;
+        }
+
+        .author-info p {
+            color: var(--light-text);
+            margin: 0;
+            font-size: 0.9rem;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            background: var(--gradient);
+            color: var(--white);
+            padding: 100px 0;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta-section:before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB2aWV3Qm94PSIwIDAgMTIwMCA4MDAiIHByZXNlcnZlQXNwZWN0UmF0aW89Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGcgZmlsbD0iIzAwMCIgZmlsbC1vcGFjaXR5PSIwLjA1Ij48cGF0aCBkPSJNIDAgNDAwIEEgNDAwIDQwMCAwIDAgMSA4MDAgNDAwIEEgNDAwIDQwMCAwIDAgMSAwIDQwMCBaIi8+PHBhdGggZD0iTSA0MDAgMCBBIDQwMCA0MDAgMCAwIDEgNDAwIDgwMCBBIDQwMCA0MDAgMCAwIDEgNDAwIDAgWiIvPjwvZz48L3N2Zz4=');
+            opacity: 0.1;
+        }
+
+        .cta-content {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .cta-text {
+            font-size: 1.2rem;
+            margin-bottom: 2.5rem;
+            opacity: 0.9;
+            max-width: 700px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Footer */
+        .footer {
+            background: #1a202c;
+            color: var(--white);
+            padding: 70px 0 30px;
+        }
+
+        .footer h5 {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .footer h5:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            width: 40px;
+            height: 3px;
+            background: var(--gradient);
+        }
+
+        .footer-links {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: #a0aec0;
+            text-decoration: none;
+            transition: var(--transition);
+        }
+
+        .footer-links a:hover {
+            color: var(--white);
+            padding-left: 5px;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #2d3748;
+            padding-top: 30px;
+            margin-top: 50px;
+            text-align: center;
+            color: #a0aec0;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-links a {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #2d3748;
+            color: var(--white);
+            transition: var(--transition);
+        }
+
+        .social-links a:hover {
+            background: var(--gradient);
+            transform: translateY(-3px);
+        }
+
+        /* Responsive */
+        @media (max-width: 992px) {
+            .hero-title {
+                font-size: 2.8rem;
+            }
+            
+            .section-title {
+                font-size: 2.2rem;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .hero-title {
+                font-size: 2.3rem;
+            }
+            
+            .section-title {
+                font-size: 2rem;
+            }
+            
+            .hero-buttons {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .hero-buttons .btn {
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .hero-title {
+                font-size: 2rem;
+            }
+            
+            .section-title {
+                font-size: 1.8rem;
+            }
+            
+            .section-padding {
+                padding: 60px 0;
+            }
         }
     </style>
 </head>
 
 <body>
-<!-- Navbar -->
-<nav class="navbar navbar-expand-lg navbar-light bg-white sticky-top shadow-sm">
-    <div class="container">
-        <a class="navbar-brand fw-bold text-primary" th:href="@{/}">
-            <i class="fas fa-store me-2"></i>EcommercePro
-        </a>
-
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
-                data-bs-target="#navbarNav">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="collapse navbar-collapse" id="navbarNav">
-            <ul class="navbar-nav mx-auto">
-                <li class="nav-item"><a class="nav-link fw-semibold" href="#features">Features</a></li>
-                <li class="nav-item"><a class="nav-link fw-semibold" href="#solutions">Solutions</a></li>
-                <li class="nav-item"><a class="nav-link fw-semibold" href="#testimonials">Testimonials</a></li>
-            </ul>
-
-            <!-- Login/Register or Logout -->
-            <div class="d-flex align-items-center">
-                <a th:href="@{/login}" class="btn btn-outline-primary me-2" sec:authorize="!isAuthenticated()">
-                    <i class="fas fa-sign-in-alt me-1"></i>Login
-                </a>
-                <a th:href="@{/register}" class="btn btn-primary" sec:authorize="!isAuthenticated()">
-                    <i class="fas fa-user-plus me-1"></i>Register
-                </a>
-
-                <a th:href="@{/logout}" class="btn btn-danger" sec:authorize="isAuthenticated()">
-                    <i class="fas fa-sign-out-alt me-1"></i>Logout
-                </a>
-            </div>
-        </div>
-    </div>
-</nav>
-
-<!-- Hero Section -->
-<section class="hero-section text-center">
-    <div class="container">
-        <h1 class="display-4 fw-bold mb-4">
-            Build, Sell, and Grow with EcommercePro
-        </h1>
-        <p class="lead mb-5">
-            Manage your business with confidence. Fast, secure, and built for success.
-        </p>
-        <div class="d-flex justify-content-center gap-3">
-            <a th:href="@{/register}" class="btn btn-light btn-lg">
-                <i class="fas fa-rocket me-2"></i>Get Started Free
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light fixed-top">
+        <div class="container">
+            <a class="navbar-brand" th:href="@{/}">
+                <i class="fas fa-store me-2"></i>EcommercePro
             </a>
-            <a th:href="@{/login}" class="btn btn-outline-light btn-lg">
-                <i class="fas fa-sign-in-alt me-2"></i>Login
-            </a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                    data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav mx-auto">
+                    <li class="nav-item">
+                        <a class="nav-link active" href="#home">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#features">Features</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#solutions">Solutions</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#testimonials">Testimonials</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#pricing">Pricing</a>
+                    </li>
+                </ul>
+
+                <!-- Login/Register or Logout -->
+                <div class="d-flex align-items-center">
+                    <a th:href="@{/login}" class="btn btn-outline-primary me-2" sec:authorize="!isAuthenticated()">
+                        <i class="fas fa-sign-in-alt me-1"></i>Login
+                    </a>
+                    <a th:href="@{/register}" class="btn btn-primary" sec:authorize="!isAuthenticated()">
+                        <i class="fas fa-user-plus me-1"></i>Register
+                    </a>
+
+                    <a th:href="@{/logout}" class="btn btn-danger" sec:authorize="isAuthenticated()">
+                        <i class="fas fa-sign-out-alt me-1"></i>Logout
+                    </a>
+                </div>
+            </div>
         </div>
-    </div>
-</section>
+    </nav>
 
-<!-- Features Section -->
-<section id="features" class="py-5 bg-light">
-    <div class="container text-center">
-        <h2 class="fw-bold mb-5">Features for Every Business</h2>
-        <div class="row g-4">
-            <div class="col-md-4">
-                <div class="feature-icon"><i class="fas fa-shopping-cart"></i></div>
-                <h5>Smart Cart</h5>
-                <p>Advanced inventory and personalized shopping experience.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-icon"><i class="fas fa-credit-card"></i></div>
-                <h5>Secure Payments</h5>
-                <p>Integrated with global payment gateways for safe transactions.</p>
-            </div>
-            <div class="col-md-4">
-                <div class="feature-icon"><i class="fas fa-chart-line"></i></div>
-                <h5>Analytics</h5>
-                <p>Get insights into customer behavior and performance metrics.</p>
+    <!-- Hero Section -->
+    <section id="home" class="hero-section">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-10 mx-auto text-center hero-content">
+                    <h1 class="hero-title" data-aos="fade-up" data-aos-delay="100">
+                        Build, Sell, and Grow Your Online Business
+                    </h1>
+                    <p class="hero-subtitle" data-aos="fade-up" data-aos-delay="200">
+                        EcommercePro provides everything you need to create, manage, and scale your online store with powerful features, analytics, and marketing tools.
+                    </p>
+                    <div class="hero-buttons" data-aos="fade-up" data-aos-delay="300">
+                        <a th:href="@{/register}" class="btn btn-light btn-lg">
+                            <i class="fas fa-rocket me-2"></i>Start Free Trial
+                        </a>
+                        <a href="#features" class="btn btn-outline-light btn-lg">
+                            <i class="fas fa-play-circle me-2"></i>Watch Demo
+                        </a>
+                    </div>
+                </div>
             </div>
         </div>
-    </div>
-</section>
+    </section>
 
-<!-- CTA -->
-<section class="py-5 text-white text-center" style="background: var(--gradient);">
-    <div class="container">
-        <h2 class="fw-bold mb-3">Join Thousands of Successful Businesses</h2>
-        <p class="mb-4">Start your free journey with EcommercePro today.</p>
-        <a th:href="@{/register}" class="btn btn-light btn-lg px-4">
-            <i class="fas fa-rocket me-2"></i>Start Free
-        </a>
-    </div>
-</section>
+    <!-- Features Section -->
+    <section id="features" class="features-section section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title" data-aos="fade-up">Powerful Features for Every Business</h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Our platform is packed with features designed to help you succeed in the competitive e-commerce landscape.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shopping-cart"></i>
+                        </div>
+                        <h4 class="feature-title">Smart Shopping Cart</h4>
+                        <p class="feature-text">Advanced cart functionality with personalized recommendations, abandoned cart recovery, and seamless checkout experience.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-credit-card"></i>
+                        </div>
+                        <h4 class="feature-title">Secure Payments</h4>
+                        <p class="feature-text">Integrated with global payment gateways including Stripe, PayPal, and more for safe, secure transactions worldwide.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-chart-line"></i>
+                        </div>
+                        <h4 class="feature-title">Advanced Analytics</h4>
+                        <p class="feature-text">Get deep insights into customer behavior, sales performance, and marketing effectiveness with our comprehensive analytics.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mobile-alt"></i>
+                        </div>
+                        <h4 class="feature-title">Mobile Optimized</h4>
+                        <p class="feature-text">Fully responsive design that looks great on all devices, with dedicated mobile apps for iOS and Android.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-shipping-fast"></i>
+                        </div>
+                        <h4 class="feature-title">Shipping & Logistics</h4>
+                        <p class="feature-text">Integrated shipping solutions with real-time rates, tracking, and automated fulfillment to streamline your operations.</p>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-headset"></i>
+                        </div>
+                        <h4 class="feature-title">24/7 Support</h4>
+                        <p class="feature-text">Our dedicated support team is available around the clock to help you with any questions or issues you may encounter.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<!-- Footer -->
-<footer class="bg-dark text-white text-center py-4">
-    <p class="mb-0">&copy; 2025 EcommercePro. Built with ❤️ by Prof. Patrick.</p>
-</footer>
+    <!-- Solutions Section -->
+    <section id="solutions" class="solutions-section section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title" data-aos="fade-up">Solutions for Every Business Type</h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Whether you're a startup or an enterprise, we have the right solution for your e-commerce needs.
+                    </p>
+                </div>
+            </div>
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="solution-card">
+                        <div class="solution-img">
+                            <i class="fas fa-store"></i>
+                        </div>
+                        <div class="solution-content">
+                            <h4 class="solution-title">Small Business</h4>
+                            <p class="solution-text">Perfect for startups and small businesses looking to establish their online presence with minimal investment.</p>
+                            <a href="#" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="solution-card">
+                        <div class="solution-img">
+                            <i class="fas fa-chart-bar"></i>
+                        </div>
+                        <div class="solution-content">
+                            <h4 class="solution-title">Growing Business</h4>
+                            <p class="solution-text">Scale your operations with advanced features, multi-channel selling, and comprehensive analytics.</p>
+                            <a href="#" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="solution-card">
+                        <div class="solution-img">
+                            <i class="fas fa-building"></i>
+                        </div>
+                        <div class="solution-content">
+                            <h4 class="solution-title">Enterprise</h4>
+                            <p class="solution-text">Custom solutions with dedicated support, API access, and enterprise-grade security for large organizations.</p>
+                            <a href="#" class="btn btn-outline-primary">Learn More</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Testimonials Section -->
+    <section id="testimonials" class="testimonials-section section-padding">
+        <div class="container">
+            <div class="row">
+                <div class="col-12 text-center mb-5">
+                    <h2 class="section-title" data-aos="fade-up">What Our Customers Say</h2>
+                    <p class="section-subtitle" data-aos="fade-up" data-aos-delay="100">
+                        Thousands of businesses trust EcommercePro to power their online stores.
+                    </p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="200">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"EcommercePro transformed our online business. The platform is intuitive, and the customer support is exceptional. Our sales have increased by 45% since switching."</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">JS</div>
+                            <div class="author-info">
+                                <h5>John Smith</h5>
+                                <p>CEO, FashionForward</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="300">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"The analytics tools provided by EcommercePro gave us insights we never had before. We've optimized our marketing strategy and seen a 60% increase in conversion rates."</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">SR</div>
+                            <div class="author-info">
+                                <h5>Sarah Rodriguez</h5>
+                                <p>Founder, TechGadgets</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6" data-aos="fade-up" data-aos-delay="400">
+                    <div class="testimonial-card">
+                        <p class="testimonial-text">"As a small business, we needed an affordable yet powerful e-commerce solution. EcommercePro delivered beyond our expectations. Setup was quick and easy."</p>
+                        <div class="testimonial-author">
+                            <div class="testimonial-avatar">MJ</div>
+                            <div class="author-info">
+                                <h5>Michael Johnson</h5>
+                                <p>Owner, HomeDecor Co.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="row">
+                <div class="col-lg-8 mx-auto text-center cta-content">
+                    <h2 class="cta-title" data-aos="fade-up">Ready to Transform Your Business?</h2>
+                    <p class="cta-text" data-aos="fade-up" data-aos-delay="100">
+                        Join thousands of successful businesses using EcommercePro to power their online stores. Start your free trial today with no commitment.
+                    </p>
+                    <div class="d-flex justify-content-center gap-3 flex-wrap" data-aos="fade-up" data-aos-delay="200">
+                        <a th:href="@{/register}" class="btn btn-light btn-lg px-4">
+                            <i class="fas fa-rocket me-2"></i>Start Free Trial
+                        </a>
+                        <a href="#" class="btn btn-outline-light btn-lg px-4">
+                            <i class="fas fa-calendar me-2"></i>Schedule a Demo
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="row g-4">
+                <div class="col-lg-4 col-md-6">
+                    <h5>About EcommercePro</h5>
+                    <p class="mt-4">We provide the complete e-commerce solution to help businesses of all sizes build, manage, and scale their online stores.</p>
+                    <div class="social-links">
+                        <a href="#"><i class="fab fa-facebook-f"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                        <a href="#"><i class="fab fa-linkedin-in"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-6">
+                    <h5>Quick Links</h5>
+                    <ul class="footer-links mt-4">
+                        <li><a href="#home">Home</a></li>
+                        <li><a href="#features">Features</a></li>
+                        <li><a href="#solutions">Solutions</a></li>
+                        <li><a href="#testimonials">Testimonials</a></li>
+                        <li><a href="#pricing">Pricing</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Resources</h5>
+                    <ul class="footer-links mt-4">
+                        <li><a href="#">Documentation</a></li>
+                        <li><a href="#">Blog</a></li>
+                        <li><a href="#">Help Center</a></li>
+                        <li><a href="#">Community</a></li>
+                        <li><a href="#">Partners</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-3 col-md-6">
+                    <h5>Contact Us</h5>
+                    <ul class="footer-links mt-4">
+                        <li><i class="fas fa-envelope me-2"></i> support@ecommercepro.com</li>
+                        <li><i class="fas fa-phone me-2"></i> +1 (555) 123-4567</li>
+                        <li><i class="fas fa-map-marker-alt me-2"></i> 123 Business Ave, Suite 100<br>New York, NY 10001</li>
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p class="mb-0">&copy; 2025 EcommercePro. All rights reserved. Built with ❤️ by Prof. Patrick.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- AOS Animation Library -->
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+    
+    <script>
+        // Initialize AOS
+        AOS.init({
+            duration: 800,
+            easing: 'ease-in-out',
+            once: true
+        });
+
+        // Navbar scroll effect
+        window.addEventListener('scroll', function() {
+            const navbar = document.querySelector('.navbar');
+            if (window.scrollY > 50) {
+                navbar.classList.add('scrolled');
+            } else {
+                navbar.classList.remove('scrolled');
+            }
+        });
+
+        // Smooth scrolling for anchor links
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                
+                const targetId = this.getAttribute('href');
+                if (targetId === '#') return;
+                
+                const targetElement = document.querySelector(targetId);
+                if (targetElement) {
+                    window.scrollTo({
+                        top: targetElement.offsetTop - 80,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+    </script>
 </body>
 </html>
