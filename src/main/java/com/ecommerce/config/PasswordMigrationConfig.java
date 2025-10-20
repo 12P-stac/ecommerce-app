@@ -1,8 +1,7 @@
 package com.ecommerce.config;
 
 import com.ecommerce.model.User;
-import com.ecommerce.repository.RoleRepository;
-
+import com.ecommerce.repository.UserRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -10,23 +9,20 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.List;
 
-import com.ecommerce.model.Role;
-import com.ecommerce.model.RoleName;
-
 @Configuration
 public class PasswordMigrationConfig {
 
     @Bean
-    CommandLineRunner encodeUserPasswords(RoleRepository userRepository, PasswordEncoder passwordEncoder) {
+    CommandLineRunner encodeUserPasswords(UserRepository userRepository, PasswordEncoder passwordEncoder) {
         return args -> {
-            List<Role> users = userRepository.findAll();
-            for (Role u : users) {
-                String rawPassword = u.getName();
-                String encodedPassword = passwordEncoder.encode(rawPassword.toString());
-                u.setName(encodedPassword);
-                    
+            List<User> users = userRepository.findAll();
+            for (User u : users) {
+                String rawPassword = u.getPassword();
+                if (!rawPassword.startsWith("$2a$")) { // avoid double encoding
+                    String encodedPassword = passwordEncoder.encode(rawPassword);
+                    u.setPassword(encodedPassword);
                 }
-            
+            }
             userRepository.saveAll(users);
             System.out.println("Password migration completed!");
         };
