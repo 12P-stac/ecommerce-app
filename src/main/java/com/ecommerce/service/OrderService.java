@@ -84,4 +84,17 @@ public List<Order> getOrderByNumber(Long id) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'getOrderByNumber'");
     }
+
+public Object countAllOrdersBySeller(User seller) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'countAllOrdersBySeller'");
+}
+public Order saveOrder(Order order) {
+    return orderRepository.save(order);
+}
+
+public void saveOrderItem(OrderItem orderItem) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'saveOrderItem'");
+}
 }

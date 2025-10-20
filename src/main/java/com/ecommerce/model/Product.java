@@ -92,4 +92,14 @@ public class Product {
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public int getStock() {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'getStock'");
+    }
+
+    public void setStock(int i) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'setStock'");
+    }
 }

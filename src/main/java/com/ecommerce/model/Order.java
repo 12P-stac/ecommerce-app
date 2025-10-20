@@ -84,11 +84,25 @@ public class Order {
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
     }
+
+    public void setStatus(OrderStatus orderStatus) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
 public enum OrderStatus {
     PENDING, PROCESSING, SHIPPED, DELIVERED, CANCELLED, REFUNDED
 }
 public void setStatus(String status2) {
     // TODO Auto-generated method stub
     throw new UnsupportedOperationException("Unimplemented method 'setStatus'");
+}
+
+public void setProduct(Product product) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setProduct'");
+}
+
+public void setQuantity(int i) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'setQuantity'");
 }
 }

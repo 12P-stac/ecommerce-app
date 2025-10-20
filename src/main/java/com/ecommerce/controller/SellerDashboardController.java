@@ -64,17 +64,24 @@ public class SellerDashboardController {
     }
 
     @GetMapping("/products")
-    public String sellerProducts(Authentication authentication, Model model) {
-        String username = authentication.getName();
-        User seller = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
-        
-        List<Product> products = productService.getActiveProductsBySeller(seller);
-        model.addAttribute("products", products);
-        model.addAttribute("seller", seller);
-        
-        return "seller/products";
-    }
+public String sellerProducts(@RequestParam(required = false, defaultValue = "all") String status,
+                             Authentication authentication, Model model) {
+    String username = authentication.getName();
+    User seller = userService.findByUsername(username)
+            .orElseThrow(() -> new RuntimeException("User not found: " + username));
+    
+    List<Product> products = "all".equals(status)
+            ? productService.getActiveProductsBySeller(seller)
+            : productService.getProductsByStatus(seller, status);
+    
+    model.addAttribute("products", products);
+    model.addAttribute("seller", seller);
+    model.addAttribute("status", status); // for tabs active highlighting
+    
+    return "seller/products";
+}
+
+    
 
     @GetMapping("/products/new")
     public String showAddProductForm(Authentication authentication, Model model) {

@@ -1,182 +1,200 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Admin Dashboard - Ecommerce App</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard | Vendor Management System</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        .admin-stats-card {
-            border-left: 4px solid;
-            transition: transform 0.2s;
+        body { font-family: 'Poppins', sans-serif; margin: 0; }
+        .dashboard-container { display: flex; min-height: 100vh; }
+
+        /* ---------------- Sidebar ---------------- */
+        .sidebar {
+            background-color: #1e1e2f;
+            color: #fff;
+            width: 250px;
+            min-height: 100vh;
+            padding: 1rem 0;
         }
-        .admin-stats-card:hover {
-            transform: translateY(-5px);
+        .sidebar-header h3 {
+            color: #fff;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 0 15px;
         }
-        .stats-users { border-left-color: #e74c3c; }
-        .stats-products { border-left-color: #3498db; }
-        .stats-orders { border-left-color: #2ecc71; }
-        .stats-pending { border-left-color: #f39c12; }
+        .sidebar-menu { padding: 0; list-style: none; }
+        .sidebar-menu li a {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #fff;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .sidebar-menu li a:hover,
+        .sidebar-menu li a.active { background-color: #3a3a5a; }
+
+        /* ---------------- Main Content ---------------- */
+        .main-content {
+            flex: 1;
+            background-color: #f8f9fa;
+            padding: 2rem;
+        }
+        .header {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        /* ---------------- Dashboard Cards ---------------- */
+        .dashboard-cards {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1rem;
+            margin-bottom: 2rem;
+        }
+        .dashboard-cards .card {
+            flex: 1 1 200px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            text-align: center;
+            padding: 1rem;
+        }
+        .card-icon {
+            font-size: 1.5rem;
+            width: 50px;
+            height: 50px;
+            line-height: 50px;
+            border-radius: 50%;
+            margin: 0 auto 10px auto;
+            color: #fff;
+        }
+        .bg-primary-light { background-color: rgba(13, 110, 253, 0.2); color: #0d6efd; }
+        .bg-success-light { background-color: rgba(25, 135, 84, 0.2); color: #198754; }
+        .bg-warning-light { background-color: rgba(255, 193, 7, 0.2); color: #ffc107; }
+        .bg-info-light { background-color: rgba(13, 202, 240, 0.2); color: #0dcaf0; }
+
+        /* ---------------- Products Table ---------------- */
+        .table-container {
+            background-color: #fff;
+            padding: 1rem;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        .table th, .table td { vertical-align: middle; }
+        .status-badge {
+            padding: 4px 8px;
+            border-radius: 5px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        .status-active { background-color: #d1e7dd; color: #0f5132; }
+        .status-inactive { background-color: #f8d7da; color: #842029; }
+
+        /* ---------------- Responsive ---------------- */
+        @media (max-width: 991px) {
+            .dashboard-cards .card { flex: 1 1 45%; }
+            .header { flex-direction: column; align-items: flex-start; gap: 0.5rem; }
+        }
+        @media (max-width: 767px) {
+            .dashboard-container { flex-direction: column; }
+            .sidebar { width: 100%; min-height: auto; }
+            .dashboard-cards .card { flex: 1 1 100%; }
+            .table-responsive { overflow-x: auto; }
+        }
     </style>
 </head>
 <body>
-    <div th:replace="dashboard :: sidebar"></div>
-
-    <div class="main-content">
-        <!-- Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <div>
-                <h2 class="fw-bold"><i class="fas fa-crown text-warning me-2"></i>Admin Dashboard</h2>
-                <p class="text-muted">System overview and management</p>
-            </div>
-            <div class="text-end">
-                <span class="badge bg-warning fs-6">Admin Mode</span>
-            </div>
+<div class="dashboard-container">
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h3><i class="fas fa-user-shield"></i> AdminHub</h3>
         </div>
-
-        <!-- Admin Stats -->
-        <div class="row mb-4">
-            <div class="col-md-3">
-                <div class="card admin-stats-card stats-users">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title text-muted">Total Users</h5>
-                                <h2 class="display-4" th:text="${totalUsers}">0</h2>
-                                <small class="text-muted">Registered users</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-users fa-2x text-danger"></i>
-                            </div>
-                        </div>
-                        <a th:href="@{/admin/users}" class="stretched-link"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card admin-stats-card stats-products">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title text-muted">Total Products</h5>
-                                <h2 class="display-4" th:text="${totalProducts}">0</h2>
-                                <small class="text-muted">Available products</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-box fa-2x text-primary"></i>
-                            </div>
-                        </div>
-                        <a th:href="@{/admin/products}" class="stretched-link"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card admin-stats-card stats-orders">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title text-muted">Total Orders</h5>
-                                <h2 class="display-4" th:text="${totalOrders}">0</h2>
-                                <small class="text-muted">All orders</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-receipt fa-2x text-success"></i>
-                            </div>
-                        </div>
-                        <a th:href="@{/admin/orders}" class="stretched-link"></a>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card admin-stats-card stats-pending">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-between">
-                            <div>
-                                <h5 class="card-title text-muted">Pending Approval</h5>
-                                <h2 class="display-4" th:text="${pendingProducts}">0</h2>
-                                <small class="text-muted">Products waiting</small>
-                            </div>
-                            <div class="align-self-center">
-                                <i class="fas fa-clock fa-2x text-warning"></i>
-                            </div>
-                        </div>
-                        <a th:href="@{/admin/products}" class="stretched-link"></a>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Admin Quick Actions -->
-        <div class="row">
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-danger text-white">
-                        <h5 class="card-title mb-0"><i class="fas fa-cogs me-2"></i>Admin Tools</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="list-group">
-                            <a th:href="@{/admin/users}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-users-cog me-2 text-danger"></i>
-                                <strong>User Management</strong>
-                                <small class="text-muted d-block">View, manage, and delete users</small>
-                            </a>
-                            <a th:href="@{/admin/products}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-clipboard-check me-2 text-primary"></i>
-                                <strong>Product Approval</strong>
-                                <small class="text-muted d-block">Approve or reject seller products</small>
-                            </a>
-                            <a th:href="@{/admin/orders}" class="list-group-item list-group-item-action">
-                                <i class="fas fa-shipping-fast me-2 text-success"></i>
-                                <strong>Order Management</strong>
-                                <small class="text-muted d-block">View and manage all orders</small>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-6">
-                <div class="card">
-                    <div class="card-header bg-warning text-dark">
-                        <h5 class="card-title mb-0"><i class="fas fa-chart-bar me-2"></i>System Overview</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center py-4">
-                            <i class="fas fa-chart-pie fa-4x text-warning mb-3"></i>
-                            <h5>System Analytics</h5>
-                            <p class="text-muted">View detailed reports and analytics</p>
-                            <div class="row text-center">
-                                <div class="col-6">
-                                    <h4 th:text="${totalUsers}" class="text-danger">0</h4>
-                                    <small>Users</small>
-                                </div>
-                                <div class="col-6">
-                                    <h4 th:text="${totalProducts}" class="text-primary">0</h4>
-                                    <small>Products</small>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Recent Activity -->
-        <div class="row mt-4">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header bg-dark text-white">
-                        <h5 class="card-title mb-0"><i class="fas fa-history me-2"></i>Recent System Activity</h5>
-                    </div>
-                    <div class="card-body">
-                        <div class="text-center py-5 text-muted">
-                            <i class="fas fa-info-circle fa-2x mb-3"></i>
-                            <p>System activity log will appear here</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <ul class="sidebar-menu">
+            <li><a href="#" class="active"><i class="fas fa-home"></i> Dashboard</a></li>
+            <li><a href="#"><i class="fas fa-users"></i> Users</a></li>
+            <li><a href="#"><i class="fas fa-box"></i> Products</a></li>
+            <li><a href="#"><i class="fas fa-shopping-cart"></i> Orders</a></li>
+            <li><a href="#"><i class="fas fa-chart-line"></i> Analytics</a></li>
+            <li><a href="#"><i class="fas fa-cog"></i> Settings</a></li>
+        </ul>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header">
+            <h1>Admin Dashboard</h1>
+            <a href="/logout" class="btn btn-outline-primary btn-sm">Logout</a>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-icon bg-primary-light"><i class="fas fa-users"></i></div>
+                    <h3 th:text="${totalUsers}">0</h3>
+                    <p>Total Users</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-icon bg-success-light"><i class="fas fa-box"></i></div>
+                    <h3 th:text="${totalProducts}">0</h3>
+                    <p>Total Products</p>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-body">
+                    <div class="card-icon bg-warning-light"><i class="fas fa-shopping-cart"></i></div>
+                    <h3 th:text="${totalOrders}">0</h3>
+                    <p>Total Orders</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Latest Products Table -->
+        <div class="table-container table-responsive">
+            <h3>Latest Products</h3>
+            <table class="table table-striped table-hover">
+                <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Seller</th>
+                    <th>Price</th>
+                    <th>Stock</th>
+                    <th>Active</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="product : ${latestProducts}">
+                    <td th:text="${product.id}">1</td>
+                    <td th:text="${product.name}">Product Name</td>
+                    <td th:text="${product.seller.username}">Seller</td>
+                    <td th:text="${product.price}">$0.00</td>
+                    <td th:text="${product.stockQuantity}">0</td>
+                    <td>
+                        <span class="status-badge" 
+                              th:text="${product.active} ? 'Yes' : 'No'"
+                              th:classappend="${product.active} ? ' status-active' : ' status-inactive'">Yes</span>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
