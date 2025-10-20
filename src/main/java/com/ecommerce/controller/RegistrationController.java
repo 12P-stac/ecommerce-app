@@ -1,21 +1,19 @@
 package com.ecommerce.controller;
 
-import com.ecommerce.model.User;
 import com.ecommerce.model.Role;
-import com.ecommerce.repository.UserRepository;
+import com.ecommerce.model.User;
 import com.ecommerce.repository.RoleRepository;
 import com.ecommerce.service.UserService;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -32,13 +30,7 @@ public class RegistrationController {
     private PasswordEncoder passwordEncoder;
 
     @GetMapping("/register")
-    public String showRegistrationForm(Model model, Authentication auth) {
-        // Redirect logged-in users to their dashboard
-        if (auth != null && auth.isAuthenticated()) {
-            return redirectByRole(auth);
-        }
-
-        // Add empty user object for form binding
+    public String showRegistrationForm(Model model) {
         model.addAttribute("user", new User());
         return "register";
     }
@@ -58,15 +50,16 @@ public class RegistrationController {
             @RequestParam(required = false) String taxId,
             Model model,
             HttpServletRequest request,
-            RedirectAttributes redirectAttributes) {
+            RedirectAttributes redirectAttributes
+    ) {
 
-        // Password validation
+        // 1️⃣ Password validation
         if (!password.equals(confirmPassword)) {
             model.addAttribute("error", "Passwords do not match");
             return "register";
         }
 
-        // Username and email validation
+        // 2️⃣ Check username/email existence
         if (userService.usernameExists(username)) {
             model.addAttribute("error", "Username already exists");
             return "register";
@@ -78,7 +71,7 @@ public class RegistrationController {
         }
 
         try {
-            // Create a new user instance
+            // 3️⃣ Create user object
             User user = new User();
             user.setFirstName(firstName);
             user.setLastName(lastName);
@@ -88,49 +81,34 @@ public class RegistrationController {
             user.setPassword(passwordEncoder.encode(password));
             user.setActive(true);
             user.setEmailVerified(false);
+            user.setCreatedAt(LocalDateTime.now());
+            user.setUpdatedAt(LocalDateTime.now());
 
-            // Assign appropriate role
-            Set<Role> roles = new HashSet<>();
-            Role role;
-
+            // 4️⃣ Set seller-specific fields
             if ("seller".equalsIgnoreCase(userType)) {
-                role = roleRepository.findByName("ROLE_SELLER")
-                        .orElseThrow(() -> new RuntimeException("Seller role not found"));
                 user.setStoreName(storeName);
                 user.setBusinessType(businessType);
                 user.setTaxId(taxId);
-            } else {
-                role = roleRepository.findByName("ROLE_USER")
-                        .orElseThrow(() -> new RuntimeException("User role not found"));
             }
 
+            // 5️⃣ Assign role
+            Set<Role> roles = new HashSet<>();
+            Role role = roleRepository.findByName(
+                    "seller".equalsIgnoreCase(userType) ? "ROLE_SELLER" : "ROLE_USER"
+            ).orElseThrow(() -> new RuntimeException("Role not found"));
             roles.add(role);
             user.setRoles(roles);
 
-            // Save to DB
+            // 6️⃣ Save user
             userService.save(user);
 
-            // Attempt auto-login
-            try {
-                request.login(username, password);
-                return redirectByRole(userService.getCurrentAuthentication());
-            } catch (ServletException e) {
-                redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
-                return "redirect:/login";
-            }
+            // 7️⃣ Redirect after registration
+            redirectAttributes.addFlashAttribute("success", "Registration successful! Please login.");
+            return "redirect:/login";
 
         } catch (Exception e) {
             model.addAttribute("error", "Registration failed: " + e.getMessage());
             return "register";
         }
-    }
-
-    private String redirectByRole(Authentication auth) {
-        if (auth == null) return "redirect:/login";
-        Set<String> roles = AuthorityUtils.authorityListToSet(auth.getAuthorities());
-        if (roles.contains("ROLE_ADMIN")) return "redirect:/admin/dashboard";
-        if (roles.contains("ROLE_SELLER")) return "redirect:/seller/dashboard";
-        if (roles.contains("ROLE_USER")) return "redirect:/user/dashboard";
-        return "redirect:/login";
     }
 }
