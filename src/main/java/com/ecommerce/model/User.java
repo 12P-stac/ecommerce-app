@@ -10,8 +10,8 @@ import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {
-    @UniqueConstraint(columnNames = "username"),
-    @UniqueConstraint(columnNames = "email")
+        @UniqueConstraint(columnNames = "username"),
+        @UniqueConstraint(columnNames = "email")
 })
 public class User {
 
@@ -50,9 +50,9 @@ public class User {
 
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(
-        name = "user_roles",
-        joinColumns = @JoinColumn(name = "user_id"),
-        inverseJoinColumns = @JoinColumn(name = "role_id")
+            name = "user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
     )
     private Set<Role> roles = new HashSet<>();
 
@@ -62,16 +62,16 @@ public class User {
     @Column(name = "updated_at", nullable = false)
     private LocalDateTime updatedAt;
 
-    @Column(name = "is_active")
+    @Column(name = "is_active", nullable = false)
     private Boolean active = true;
 
-    @Column(name = "email_verified")
+    @Column(name = "email_verified", nullable = false)
     private Boolean emailVerified = false;
 
     @Column(name = "verification_token", length = 100)
     private String verificationToken;
 
-    // For sellers - additional fields
+    // Seller-specific fields
     @Column(name = "store_name")
     private String storeName;
 
@@ -96,22 +96,14 @@ public class User {
         this.password = password;
     }
 
-    // Helper methods for roles
+    // Helper methods
     public boolean hasRole(String roleName) {
         return roles.stream().anyMatch(role -> role.getName().equals(roleName));
     }
 
-    public boolean isUser() {
-        return hasRole("ROLE_USER");
-    }
-
-    public boolean isSeller() {
-        return hasRole("ROLE_SELLER");
-    }
-
-    public boolean isAdmin() {
-        return hasRole("ROLE_ADMIN");
-    }
+    public boolean isUser() { return hasRole("ROLE_USER"); }
+    public boolean isSeller() { return hasRole("ROLE_SELLER"); }
+    public boolean isAdmin() { return hasRole("ROLE_ADMIN"); }
 
     public String getFullName() {
         return firstName + " " + lastName;
@@ -167,7 +159,7 @@ public class User {
     public void setTaxId(String taxId) { this.taxId = taxId; }
 
     @PreUpdate
-    public void setUpdatedAt() {
+    public void updateTimestamp() {
         this.updatedAt = LocalDateTime.now();
     }
 }

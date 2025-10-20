@@ -6,404 +6,127 @@
     <title>Register - EcommercePro</title>
 
     <!-- Bootstrap 5 -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
     <style>
         body {
-            font-family: 'Inter', sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            font-family: 'Segoe UI', sans-serif;
         }
-        .register-card {
-            background: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            padding: 40px;
-            max-width: 520px;
+        .card {
+            border-radius: 20px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.2);
             width: 100%;
-        }
-        .register-card h2 {
-            font-weight: 700;
-            color: #2c5aa0;
-            margin-bottom: 30px;
+            max-width: 550px;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-color: #667eea;
             border: none;
-            padding: 12px 25px;
-            font-weight: 600;
-            width: 100%;
-            transition: transform 0.3s ease;
         }
         .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            background-color: #5a67d8;
         }
-        .register-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
-        .register-footer a {
-            color: #667eea;
-            text-decoration: none;
-            font-weight: 500;
-        }
-        .register-footer a:hover {
-            text-decoration: underline;
-        }
-        .password-match {
-            font-size: 0.9rem;
-            margin-top: 5px;
-        }
-        .password-match.valid { color: green; }
-        .password-match.invalid { color: red; }
-        .input-group-text { cursor: pointer; }
         .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
-        }
-        .alert {
-            border-radius: 10px;
-        }
-        .user-type-card {
-            border: 2px solid #e9ecef;
-            border-radius: 10px;
-            padding: 20px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin-bottom: 15px;
-        }
-        .user-type-card:hover {
-            border-color: #667eea;
-            background-color: #f8f9ff;
-        }
-        .user-type-card.selected {
-            border-color: #667eea;
-            background-color: #f0f4ff;
-        }
-        .user-type-icon {
-            font-size: 2rem;
-            margin-bottom: 10px;
-            color: #667eea;
-        }
-        .seller-fields {
-            display: none;
-            background: #f8f9fa;
-            padding: 20px;
-            border-radius: 10px;
-            margin-top: 15px;
-        }
-        .seller-fields.active {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
+            border-color: #764ba2;
+            box-shadow: 0 0 5px rgba(118, 75, 162, 0.5);
         }
     </style>
 </head>
+
 <body>
-<div class="register-card">
-    <h2 class="text-center">Create Your Account</h2>
+<div class="card p-4">
+    <h3 class="text-center mb-3">Create an Account</h3>
 
-    <!-- Success message -->
-    <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
-        <span th:text="${success}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <!-- Error Message -->
+    <div th:if="${error}" class="alert alert-danger text-center" th:text="${error}"></div>
+    <div th:if="${success}" class="alert alert-success text-center" th:text="${success}"></div>
 
-    <!-- Error message -->
-    <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
-        <span th:text="${error}"></span>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
+    <form th:action="@{/register}" method="post">
 
-    <!-- Validation errors -->
-    <div th:if="${#fields.hasErrors('*')}" class="alert alert-warning alert-dismissible fade show" role="alert">
-        <h6 class="alert-heading">Please fix the following errors:</h6>
-        <ul class="mb-0">
-            <li th:each="err : ${#fields.errors('*')}" th:text="${err}"></li>
-        </ul>
-        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-    </div>
-
-    <form th:action="@{/register}" method="post" id="registerForm" th:object="${user}">
-        
-        <!-- User Type Selection -->
-        <div class="mb-4">
-            <label class="form-label fw-semibold mb-3">I want to join as:</label>
-            <div class="row">
-                <div class="col-6">
-                    <div class="user-type-card text-center" data-type="user" id="userTypeUser">
-                        <div class="user-type-icon">
-                            <i class="fas fa-user"></i>
-                        </div>
-                        <h6>Customer</h6>
-                        <small class="text-muted">Shop and purchase products</small>
-                    </div>
-                </div>
-                <div class="col-6">
-                    <div class="user-type-card text-center" data-type="seller" id="userTypeSeller">
-                        <div class="user-type-icon">
-                            <i class="fas fa-store"></i>
-                        </div>
-                        <h6>Seller</h6>
-                        <small class="text-muted">Sell your products</small>
-                    </div>
-                </div>
-            </div>
-            <input type="hidden" id="userType" name="userType" value="user" required>
-        </div>
-
-        <!-- Personal Information -->
         <div class="row">
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="firstName" class="form-label">First Name</label>
-                    <input type="text" class="form-control" id="firstName" name="firstName" th:field="*{firstName}" required>
-                    <div class="form-text text-danger" th:if="${#fields.hasErrors('firstName')}" th:errors="*{firstName}"></div>
-                </div>
+            <div class="col-md-6 mb-3">
+                <label>First Name</label>
+                <input type="text" name="firstName" class="form-control" placeholder="John" required>
             </div>
-            <div class="col-md-6">
-                <div class="mb-3">
-                    <label for="lastName" class="form-label">Last Name</label>
-                    <input type="text" class="form-control" id="lastName" name="lastName" th:field="*{lastName}" required>
-                    <div class="form-text text-danger" th:if="${#fields.hasErrors('lastName')}" th:errors="*{lastName}"></div>
-                </div>
+            <div class="col-md-6 mb-3">
+                <label>Last Name</label>
+                <input type="text" name="lastName" class="form-control" placeholder="Doe" required>
             </div>
         </div>
 
         <div class="mb-3">
-            <label for="username" class="form-label">Username</label>
-            <input type="text" class="form-control" id="username" name="username" th:field="*{username}" required>
-            <div class="form-text text-danger" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
+            <label>Username</label>
+            <input type="text" name="username" class="form-control" placeholder="johndoe" required>
         </div>
 
         <div class="mb-3">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" th:field="*{email}" required>
-            <div class="form-text text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></div>
+            <label>Email</label>
+            <input type="email" name="email" class="form-control" placeholder="example@email.com" required>
         </div>
 
         <div class="mb-3">
-            <label for="phone" class="form-label">Phone Number</label>
-            <input type="tel" class="form-control" id="phone" name="phone" th:field="*{phone}" placeholder="+1 (555) 123-4567">
-            <div class="form-text text-danger" th:if="${#fields.hasErrors('phone')}" th:errors="*{phone}"></div>
+            <label>Phone</label>
+            <input type="text" name="phone" class="form-control" placeholder="+254..." required>
         </div>
 
-        <!-- Seller Specific Fields -->
-        <div class="seller-fields" id="sellerFields">
-            <h6 class="mb-3"><i class="fas fa-store me-2"></i>Seller Information</h6>
-            
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label>Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <div class="col-md-6 mb-3">
+                <label>Confirm Password</label>
+                <input type="password" name="confirmPassword" class="form-control" required>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            <label>User Type</label>
+            <select name="userType" id="userType" class="form-select" required>
+                <option value="">Select type</option>
+                <option value="user">Regular User</option>
+                <option value="seller">Seller</option>
+            </select>
+        </div>
+
+        <!-- Seller-specific fields -->
+        <div id="sellerFields" style="display: none;">
             <div class="mb-3">
-                <label for="storeName" class="form-label">Store Name</label>
-                <input type="text" class="form-control" id="storeName" name="storeName" placeholder="Enter your store name">
-                <div class="form-text">This will be displayed to customers</div>
+                <label>Store Name</label>
+                <input type="text" name="storeName" class="form-control" placeholder="My Shop">
             </div>
-
             <div class="mb-3">
-                <label for="businessType" class="form-label">Business Type</label>
-                <select class="form-select" id="businessType" name="businessType">
-                    <option value="" selected>Select business type</option>
-                    <option value="retail">Retail</option>
-                    <option value="wholesale">Wholesale</option>
-                    <option value="manufacturer">Manufacturer</option>
-                    <option value="dropshipping">Dropshipping</option>
-                    <option value="handmade">Handmade/Crafts</option>
-                    <option value="digital">Digital Products</option>
-                    <option value="other">Other</option>
-                </select>
+                <label>Business Type</label>
+                <input type="text" name="businessType" class="form-control" placeholder="Electronics, Fashion, etc.">
             </div>
-
             <div class="mb-3">
-                <label for="taxId" class="form-label">Tax ID (Optional)</label>
-                <input type="text" class="form-control" id="taxId" name="taxId" placeholder="Enter your tax identification number">
-                <div class="form-text">For business verification purposes</div>
+                <label>Tax ID</label>
+                <input type="text" name="taxId" class="form-control" placeholder="Tax ID Number">
             </div>
         </div>
 
-        <!-- Password -->
-        <div class="mb-3">
-            <label for="password" class="form-label">Password</label>
-            <div class="input-group">
-                <input type="password" class="form-control" id="password" name="password" th:field="*{password}" required>
-                <span class="input-group-text" id="togglePassword"><i class="fas fa-eye"></i></span>
-            </div>
-            <div class="form-text text-danger" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
-        </div>
+        <button type="submit" class="btn btn-primary w-100 mt-3">Register</button>
 
-        <!-- Confirm password -->
-        <div class="mb-3">
-            <label for="confirmPassword" class="form-label">Confirm Password</label>
-            <div class="input-group">
-                <input type="password" class="form-control" id="confirmPassword" name="confirmPassword" required>
-                <span class="input-group-text" id="toggleConfirm"><i class="fas fa-eye"></i></span>
-            </div>
-            <div id="passwordMessage" class="password-match"></div>
-        </div>
-
-        <!-- Terms and Conditions -->
-        <div class="mb-3 form-check">
-            <input type="checkbox" class="form-check-input" id="terms" name="terms" required>
-            <label class="form-check-label" for="terms">
-                I agree to the <a href="#" data-bs-toggle="modal" data-bs-target="#termsModal">Terms and Conditions</a>
-            </label>
-        </div>
-
-        <button type="submit" class="btn btn-primary mb-3" id="registerBtn" disabled>
-            <i class="fas fa-user-plus me-2"></i>Create Account
-        </button>
-    </form>
-
-    <div class="register-footer">
-        <p>Already have an account?
-            <a th:href="@{/login}"><i class="fas fa-sign-in-alt me-1"></i>Login here</a>
+        <p class="text-center mt-3">
+            Already have an account?
+            <a th:href="@{/login}" class="text-decoration-none">Login</a>
         </p>
-    </div>
+    </form>
 </div>
 
-<!-- Terms and Conditions Modal -->
-<div class="modal fade" id="termsModal" tabindex="-1">
-    <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Terms and Conditions</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-            </div>
-            <div class="modal-body">
-                <h6>1. Account Registration</h6>
-                <p>You must provide accurate and complete information when creating your account.</p>
-                
-                <h6>2. User Responsibilities</h6>
-                <p>You are responsible for maintaining the confidentiality of your account credentials.</p>
-                
-                <h6>3. Seller Agreement</h6>
-                <p>Sellers must comply with all applicable laws and maintain product quality standards.</p>
-                
-                <h6>4. Data Privacy</h6>
-                <p>We collect and process your personal data in accordance with our Privacy Policy.</p>
-                
-                <h6>5. Acceptable Use</h6>
-                <p>You agree not to use the service for any illegal or unauthorized purpose.</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- Bootstrap JS -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
+<!-- Script to toggle seller fields -->
 <script>
-    // User Type Selection
-    const userTypeCards = document.querySelectorAll('.user-type-card');
-    const userTypeInput = document.getElementById('userType');
+    const userTypeSelect = document.getElementById('userType');
     const sellerFields = document.getElementById('sellerFields');
 
-    userTypeCards.forEach(card => {
-        card.addEventListener('click', function() {
-            // Remove selected class from all cards
-            userTypeCards.forEach(c => c.classList.remove('selected'));
-            
-            // Add selected class to clicked card
-            this.classList.add('selected');
-            
-            // Update hidden input value
-            const userType = this.getAttribute('data-type');
-            userTypeInput.value = userType;
-            
-            // Show/hide seller fields
-            if (userType === 'seller') {
-                sellerFields.classList.add('active');
-            } else {
-                sellerFields.classList.remove('active');
-            }
-        });
+    userTypeSelect.addEventListener('change', function() {
+        sellerFields.style.display = (this.value === 'seller') ? 'block' : 'none';
     });
-
-    // Set default selection
-    document.getElementById('userTypeUser').classList.add('selected');
-
-    // Password validation
-    const password = document.getElementById('password');
-    const confirmPassword = document.getElementById('confirmPassword');
-    const message = document.getElementById('passwordMessage');
-    const registerBtn = document.getElementById('registerBtn');
-    const termsCheckbox = document.getElementById('terms');
-
-    function validateForm() {
-        const passwordsMatch = password.value === confirmPassword.value && password.value !== "";
-        const termsAccepted = termsCheckbox.checked;
-        const userTypeSelected = userTypeInput.value !== "";
-        
-        // Additional validation for seller
-        let sellerValid = true;
-        if (userTypeInput.value === 'seller') {
-            const storeName = document.getElementById('storeName').value;
-            sellerValid = storeName.trim() !== '';
-        }
-        
-        registerBtn.disabled = !(passwordsMatch && termsAccepted && userTypeSelected && sellerValid);
-    }
-
-    function checkPassword() {
-        if (confirmPassword.value === "") {
-            message.textContent = "";
-            validateForm();
-            return;
-        }
-
-        if (password.value === confirmPassword.value) {
-            message.textContent = "Passwords match!";
-            message.classList.remove('invalid');
-            message.classList.add('valid');
-        } else {
-            message.textContent = "Passwords do not match!";
-            message.classList.remove('valid');
-            message.classList.add('invalid');
-        }
-        validateForm();
-    }
-
-    password.addEventListener('input', checkPassword);
-    confirmPassword.addEventListener('input', checkPassword);
-    termsCheckbox.addEventListener('change', validateForm);
-    userTypeInput.addEventListener('change', validateForm);
-
-    // Validate seller fields when they change
-    document.getElementById('storeName')?.addEventListener('input', validateForm);
-    document.getElementById('businessType')?.addEventListener('change', validateForm);
-
-    // Toggle show/hide password
-    document.getElementById('togglePassword').addEventListener('click', () => {
-        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
-        password.setAttribute('type', type);
-        document.getElementById('togglePassword').innerHTML =
-            type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
-    });
-
-    document.getElementById('toggleConfirm').addEventListener('click', () => {
-        const type = confirmPassword.getAttribute('type') === 'password' ? 'text' : 'password';
-        confirmPassword.setAttribute('type', type);
-        document.getElementById('toggleConfirm').innerHTML =
-            type === 'password' ? '<i class="fas fa-eye"></i>' : '<i class="fas fa-eye-slash"></i>';
-    });
-
-    // Real-time validation
-    document.getElementById('registerForm').addEventListener('input', validateForm);
 </script>
+
 </body>
 </html>

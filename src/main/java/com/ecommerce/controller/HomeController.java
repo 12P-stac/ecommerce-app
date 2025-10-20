@@ -21,12 +21,4 @@ public class HomeController {
         return "home";
     }
 
-    @GetMapping("/login")
-    public String login(Authentication auth) {
-        // Remove the redirect logic here - let Spring Security handle it
-        if (auth != null && auth.isAuthenticated()) {
-            return "redirect:/"; // Let home method handle the redirect
-        }
-        return "login";
-    }
 }
