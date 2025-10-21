@@ -39,43 +39,42 @@ public class ProductService {
     public Long countActiveProductsBySeller(User seller) {
         return productRepository.countActiveProductsBySeller(seller.getId());
     }
-    public Page<Product> getAllProducts(Pageable pageable) {
-    return productRepository.findAll(pageable);
-}
 
-    
+    public Page<Product> getAllProducts(Pageable pageable) {
+        return productRepository.findAll(pageable);
+    }
+
     public List<Product> getProductsByCategory(String category) {
         return productRepository.findByCategoryAndActiveTrue(category);
     }
+
     public List<Product> getProductsByStatus(User seller, String status) {
         switch (status.toLowerCase()) {
             case "active":
                 return productRepository.findBySellerAndActiveTrue(seller);
             case "outofstock":
-                return productRepository.findBySellerAndQuantityEquals(seller, 0);
+                return productRepository.findBySellerAndStockQuantityEquals(seller, 0); // corrected
             case "pending":
-                return productRepository.findBySellerAndApprovedFalse(seller);
+                return productRepository.findBySellerAndApprovedFalse(seller); // works now
             default:
                 return getActiveProductsBySeller(seller);
         }
     }
+
     public Long countProductsByStatus(User seller, String status) {
         switch (status.toLowerCase()) {
             case "active":
                 return productRepository.countActiveProductsBySeller(seller.getId());
             case "outofstock":
-                return productRepository.countBySellerAndQuantityEquals(seller, 0);
+                return productRepository.countBySellerAndStockQuantityEquals(seller, 0); // corrected
             case "pending":
-                return productRepository.countBySellerAndApprovedFalse(seller);
+                return productRepository.countBySellerAndApprovedFalse(seller); // works now
             default:
                 return countActiveProductsBySeller(seller);
         }
     }
 
     public Page<Product> getProductsByCategory(String category, Pageable pageable) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getProductsByCategory'");
+        return productRepository.findByCategoryAndActiveTrue(category, pageable);
     }
-   
-    
 }

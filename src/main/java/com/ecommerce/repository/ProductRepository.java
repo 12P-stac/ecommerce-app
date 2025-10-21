@@ -2,6 +2,8 @@ package com.ecommerce.repository;
 
 import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,14 +15,18 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
     List<Product> findBySellerAndActiveTrue(User seller);
     List<Product> findByActiveTrue();
     List<Product> findByCategoryAndActiveTrue(String category);
-    
+
+    Page<Product> findByCategoryAndActiveTrue(String category, Pageable pageable);
+
     @Query("SELECT p FROM Product p WHERE p.seller.id = :sellerId AND p.active = true")
     List<Product> findActiveProductsBySellerId(@Param("sellerId") Long sellerId);
-    
+
     @Query("SELECT COUNT(p) FROM Product p WHERE p.seller.id = :sellerId AND p.active = true")
     Long countActiveProductsBySeller(@Param("sellerId") Long sellerId);
-    List<Product> findBySellerAndQuantityEquals(User seller, int i);
+
+    List<Product> findBySellerAndStockQuantityEquals(User seller, int stockQuantity);
     List<Product> findBySellerAndApprovedFalse(User seller);
-    Long countBySellerAndQuantityEquals(User seller, int i);
+
+    Long countBySellerAndStockQuantityEquals(User seller, int stockQuantity);
     Long countBySellerAndApprovedFalse(User seller);
 }

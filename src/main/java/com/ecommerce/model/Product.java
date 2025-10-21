@@ -23,7 +23,8 @@ public class Product {
     @Column(nullable = false, precision = 10, scale = 2)
     private BigDecimal price;
     
-    private Integer stockQuantity;
+    @Column(name = "stock_quantity")
+    private Integer stockQuantity;  // Corrected field name
     
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "seller_id")
@@ -37,7 +38,7 @@ public class Product {
     private Boolean active = true;
 
     @Column(nullable = false)
-    private Boolean approved = false;  // <-- added field
+    private Boolean approved = false;  // Added field for approval
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -81,7 +82,7 @@ public class Product {
     
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
-
+    
     public Boolean getApproved() { return approved; }
     public void setApproved(Boolean approved) { this.approved = approved; }
 
