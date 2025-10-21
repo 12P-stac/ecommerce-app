@@ -35,6 +35,9 @@ public class Product {
     
     @Column(nullable = false)
     private Boolean active = true;
+
+    @Column(nullable = false)
+    private Boolean approved = false;  // <-- added field
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -78,7 +81,10 @@ public class Product {
     
     public Boolean getActive() { return active; }
     public void setActive(Boolean active) { this.active = active; }
-    
+
+    public Boolean getApproved() { return approved; }
+    public void setApproved(Boolean approved) { this.approved = approved; }
+
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
     
@@ -91,15 +97,5 @@ public class Product {
     @PreUpdate
     public void setUpdatedAt() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    public int getStock() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getStock'");
-    }
-
-    public void setStock(int i) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'setStock'");
     }
 }
