@@ -6,7 +6,6 @@ import com.ecommerce.model.User;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.ProductService;
 import com.ecommerce.service.UserService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -30,7 +29,17 @@ public class SellerDashboardController {
     @Autowired
     private OrderService orderService;
 
-    // ✅ Seller dashboard summary
+    // ✅ Helper to add seller info to all pages
+    private void addSellerToModel(Authentication authentication, Model model) {
+        String username = authentication.getName();
+        User seller = userService.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("Seller not found: " + username));
+
+        model.addAttribute("seller", seller);
+        model.addAttribute("sellerName", seller.getFullName());
+    }
+
+    // ✅ Dashboard
     @GetMapping("/dashboard")
     public String sellerDashboard(Authentication authentication, Model model) {
         String username = authentication.getName();
@@ -50,6 +59,7 @@ public class SellerDashboardController {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         model.addAttribute("seller", seller);
+        model.addAttribute("sellerName", seller.getFullName());
         model.addAttribute("products", sellerProducts);
         model.addAttribute("orders", sellerOrders);
         model.addAttribute("totalProducts", totalProducts);
@@ -60,10 +70,11 @@ public class SellerDashboardController {
         return "seller/dashboard";
     }
 
-    // ✅ Seller products view
+    // ✅ Products
     @GetMapping("/products")
     public String sellerProducts(@RequestParam(required = false, defaultValue = "all") String status,
                                  Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
         String username = authentication.getName();
         User seller = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Seller not found: " + username));
@@ -72,7 +83,6 @@ public class SellerDashboardController {
                 ? productService.getActiveProductsBySeller(seller)
                 : productService.getProductsByStatus(seller, status);
 
-        model.addAttribute("seller", seller);
         model.addAttribute("products", products);
         model.addAttribute("status", status);
         return "seller/products";
@@ -81,16 +91,12 @@ public class SellerDashboardController {
     // ✅ Add product form
     @GetMapping("/products/new")
     public String showAddProductForm(Authentication authentication, Model model) {
-        String username = authentication.getName();
-        User seller = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Seller not found: " + username));
-
-        model.addAttribute("seller", seller);
+        addSellerToModel(authentication, model);
         model.addAttribute("product", new Product());
         return "seller/add-product";
     }
 
-    // ✅ Handle product save
+    // ✅ Save product
     @PostMapping("/products")
     public String addProduct(@ModelAttribute Product product,
                              Authentication authentication,
@@ -106,16 +112,15 @@ public class SellerDashboardController {
         return "redirect:/seller/products";
     }
 
-    // ✅ View orders
+    // ✅ Orders
     @GetMapping("/orders")
     public String sellerOrders(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
         String username = authentication.getName();
         User seller = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("Seller not found: " + username));
 
         List<Order> orders = orderService.getSellerOrders(seller);
-
-        model.addAttribute("seller", seller);
         model.addAttribute("orders", orders);
         return "seller/orders";
     }
@@ -132,5 +137,42 @@ public class SellerDashboardController {
             redirectAttributes.addFlashAttribute("error", "Failed to update order status: " + e.getMessage());
         }
         return "redirect:/seller/orders";
+    }
+
+    // ✅ Stub pages (working links)
+    @GetMapping("/analytics")
+    public String analytics(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
+        return "seller/analytics";
+    }
+
+    @GetMapping("/store")
+    public String store(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
+        return "seller/store";
+    }
+
+    @GetMapping("/messages")
+    public String messages(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
+        return "seller/messages";
+    }
+
+    @GetMapping("/promotions")
+    public String promotions(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
+        return "seller/promotions";
+    }
+
+    @GetMapping("/shipping")
+    public String shipping(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
+        return "seller/shipping";
+    }
+
+    @GetMapping("/settings")
+    public String settings(Authentication authentication, Model model) {
+        addSellerToModel(authentication, model);
+        return "seller/settings";
     }
 }
