@@ -53,7 +53,7 @@ public class UserDashboardController {
         Page<Product> allProductsPage;
     
         if (category != null && !category.isEmpty()) {
-            allProductsPage = productService.getProductsByCategory(category, pageable);
+            allProductsPage = (Page<Product>) productService.getProductsByCategory(category, pageable);
         } else {
             allProductsPage = productService.getAllProducts(pageable);
         }

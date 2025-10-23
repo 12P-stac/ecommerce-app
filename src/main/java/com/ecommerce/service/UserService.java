@@ -73,5 +73,15 @@ public void registerUserWithRole(User user, String roleName) {
     userRepository.save(user);
 }
 
+public Object getOrCreateRole(String string) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'getOrCreateRole'");
+}
+
+public String encodePassword(String password) {
+    // TODO Auto-generated method stub
+    throw new UnsupportedOperationException("Unimplemented method 'encodePassword'");
+}
+
 
 }

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Add Product | VendorHub</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body { font-family: 'Poppins', sans-serif; background-color: #f8f9fa; }
+.container { max-width: 900px; margin: 2rem auto; }
+.card { border-radius: 10px; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+.card-header { background-color: #0d6efd; color: #fff; font-weight: 600; border-radius: 10px 10px 0 0; }
+.form-label { font-weight: 500; }
+.btn-primary { background-color: #0d6efd; border: none; }
+.btn-primary:hover { background-color: #0b5ed7; }
+</style>
+</head>
+<body>
+
+<div class="container">
+    <div class="card">
+        <div class="card-header">
+            <h3><i class="fas fa-plus me-2"></i>Add New Product</h3>
+        </div>
+        <div class="card-body">
+            <form th:action="@{/seller/add-product}" th:object="${product}" method="post" enctype="multipart/form-data">
+                <div class="mb-3">
+                    <label for="name" class="form-label">Product Name</label>
+                    <input type="text" th:field="*{name}" class="form-control" id="name" placeholder="Enter product name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label for="description" class="form-label">Description</label>
+                    <textarea th:field="*{description}" class="form-control" id="description" rows="3" placeholder="Enter product description" required></textarea>
+                </div>
+
+                <div class="row">
+                    <div class="mb-3 col-md-6">
+                        <label for="price" class="form-label">Price (KSh)</label>
+                        <input type="number" step="0.01" th:field="*{price}" class="form-control" id="price" placeholder="Enter price" required>
+                    </div>
+                    <div class="mb-3 col-md-6">
+                        <label for="stockQuantity" class="form-label">Stock Quantity</label>
+                        <input type="number" th:field="*{stockQuantity}" class="form-control" id="stockQuantity" placeholder="Enter stock quantity" required>
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label for="category" class="form-label">Category</label>
+                    <select th:field="*{category}" class="form-select" id="category" required>
+                        <option value="" disabled selected>Select category</option>
+                        <option>Electronics</option>
+                        <option>Clothing</option>
+                        <option>Books</option>
+                        <option>Home & Kitchen</option>
+                        <option>Other</option>
+                    </select>
+                </div>
+
+                <div class="mb-3">
+                    <label for="image" class="form-label">Product Image</label>
+                    <input type="file" th:field="*{imageUrl}" class="form-control" id="image" accept="image/*" required>
+                </div>
+
+                <div class="d-flex justify-content-end">
+                    <a href="/seller/dashboard" class="btn btn-secondary me-2"><i class="fas fa-arrow-left me-1"></i> Cancel</a>
+                    <button type="submit" class="btn btn-primary"><i class="fas fa-plus me-1"></i> Add Product</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

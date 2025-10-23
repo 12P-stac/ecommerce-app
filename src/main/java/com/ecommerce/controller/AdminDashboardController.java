@@ -1,6 +1,8 @@
 package com.ecommerce.controller;
 
+import com.ecommerce.model.Product;
 import com.ecommerce.model.User;
+import com.ecommerce.service.ProductService;
 import com.ecommerce.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -18,111 +20,77 @@ public class AdminDashboardController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/dashboard")
-    public String adminDashboard(Authentication authentication, Model model) {
+    @Autowired
+    private ProductService productService;
+
+    // View all products
+    @GetMapping("/products")
+    public String manageProducts(Authentication authentication, Model model) {
         String username = authentication.getName();
         User admin = userService.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found: " + username));
-        
-        // Get statistics
-        List<User> allUsers = userService.findAll();
-        Long totalUsers = (long) allUsers.size();
-        Long totalSellers = allUsers.stream()
-                .filter(user -> user.hasRole("ROLE_SELLER"))
-                .count();
-        Long totalAdmins = allUsers.stream()
-                .filter(user -> user.hasRole("ROLE_ADMIN"))
-                .count();
-        
-        // Get recent users (last 5)
-        List<User> recentUsers = allUsers.stream()
-                .limit(5)
-                .toList();
-        
-        model.addAttribute("username", admin.getUsername());
+
+        List<Product> allProducts = productService.getAllApprovedProducts(); 
+        model.addAttribute("products", allProducts);
         model.addAttribute("admin", admin);
-        model.addAttribute("totalUsers", totalUsers);
-        model.addAttribute("totalSellers", totalSellers);
-        model.addAttribute("totalAdmins", totalAdmins);
-        model.addAttribute("recentUsers", recentUsers);
-        
-        return "admin/dashboard";
+        return "admin/products";
     }
 
-    @GetMapping("/users")
-    public String manageUsers(Authentication authentication, Model model) {
-        String username = authentication.getName();
-        User admin = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
-        
-        List<User> allUsers = userService.findAll();
-        model.addAttribute("users", allUsers);
-        model.addAttribute("admin", admin);
-        
-        return "admin/users";
-    }
-
-    @PostMapping("/users/{userId}/toggle-status")
-    public String toggleUserStatus(@PathVariable Long userId,
-                                 Authentication authentication,
-                                 RedirectAttributes redirectAttributes) {
+    // Approve a product
+    @PostMapping("/products/approve/{productId}")
+    public String approveProduct(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
         try {
-            User user = userService.findById(userId)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
-            
-            // Use getActive() instead of getIsActive()
-            user.setActive(!user.getActive());
-            userService.save(user);
-            
-            String status = user.getActive() ? "activated" : "deactivated";
-            redirectAttributes.addFlashAttribute("success", "User " + status + " successfully!");
+            Product product = productService.getProductById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            product.setApproved(true);
+            productService.save(product);
+            redirectAttributes.addFlashAttribute("success", "Product approved successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to update user status: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Failed to approve product: " + e.getMessage());
         }
-        
-        return "redirect:/admin/users";
+        return "redirect:/admin/products";
     }
 
-    @GetMapping("/sellers")
-    public String manageSellers(Authentication authentication, Model model) {
-        String username = authentication.getName();
-        User admin = userService.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("User not found: " + username));
-        
-        List<User> sellers = userService.findAll().stream()
-                .filter(user -> user.hasRole("ROLE_SELLER"))
-                .toList();
-        
-        model.addAttribute("sellers", sellers);
-        model.addAttribute("admin", admin);
-        
-        return "admin/sellers";
-    }
-
-    // Method to manually create admin users (for testing)
-    @GetMapping("/create-admin")
-    public String createAdminUser(RedirectAttributes redirectAttributes) {
+    // Reject a product
+    @PostMapping("/products/reject/{productId}")
+    public String rejectProduct(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
         try {
-            // Check if admin already exists
-            if (userService.findByUsername("admin").isEmpty()) {
-                User admin = new User();
-                admin.setFirstName("System");
-                admin.setLastName("Administrator");
-                admin.setUsername("admin");
-                admin.setEmail("admin@ecommercepro.com");
-                admin.setPassword("admin123"); // This will be encoded
-                
-                // You'll need to set the admin role here
-                // This is just for testing - in production, create admins manually
-                userService.save(admin);
-                redirectAttributes.addFlashAttribute("success", "Admin user created successfully!");
-            } else {
-                redirectAttributes.addFlashAttribute("info", "Admin user already exists!");
-            }
+            Product product = productService.getProductById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            product.setApproved(false);
+            productService.save(product);
+            redirectAttributes.addFlashAttribute("success", "Product rejected successfully!");
         } catch (Exception e) {
-            redirectAttributes.addFlashAttribute("error", "Failed to create admin user: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("error", "Failed to reject product: " + e.getMessage());
         }
-        
-        return "redirect:/admin/dashboard";
+        return "redirect:/admin/products";
+    }
+
+    // Toggle product active/inactive
+    @PostMapping("/products/toggle/{productId}")
+    public String toggleProductStatus(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
+        try {
+            Product product = productService.getProductById(productId)
+                    .orElseThrow(() -> new RuntimeException("Product not found"));
+            product.setActive(!product.getActive());
+            productService.save(product);
+            String status = product.getActive() ? "activated" : "deactivated";
+            redirectAttributes.addFlashAttribute("success", "Product " + status + " successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to update product status: " + e.getMessage());
+        }
+        return "redirect:/admin/products";
+    }
+
+    // Delete a product
+    @PostMapping("/products/delete/{productId}")
+    public String deleteProduct(@PathVariable Long productId, RedirectAttributes redirectAttributes) {
+        try {
+            productService.deleteProduct(productId);
+            redirectAttributes.addFlashAttribute("success", "Product deleted successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to delete product: " + e.getMessage());
+        }
+        return "redirect:/admin/products";
     }
 }

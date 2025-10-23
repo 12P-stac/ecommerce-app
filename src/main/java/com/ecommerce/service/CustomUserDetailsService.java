@@ -27,17 +27,19 @@ public class CustomUserDetailsService implements UserDetailsService {
         return new org.springframework.security.core.userdetails.User(
                 user.getUsername(),
                 user.getPassword(),
-                user.getActive(), // Changed from getIsActive() to getActive()
-                true, // account non-expired
-                true, // credentials non-expired
-                true, // account non-locked
+                user.getActive(),
+                true,
+                true,
+                true,
                 getAuthorities(user)
         );
     }
 
     private Collection<? extends GrantedAuthority> getAuthorities(User user) {
         return user.getRoles().stream()
-                .map(role -> new SimpleGrantedAuthority(role.getName()))
+                .map(role -> new SimpleGrantedAuthority(
+                        role.getName().startsWith("ROLE_") ? role.getName() : "ROLE_" + role.getName()
+                ))
                 .collect(Collectors.toList());
     }
 }

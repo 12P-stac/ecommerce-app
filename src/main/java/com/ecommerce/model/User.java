@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
+
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
@@ -109,6 +110,18 @@ public class User {
         return firstName + " " + lastName;
     }
 
+    // ✅ Added this new helper for Thymeleaf (${seller.initials})
+    @Transient
+    public String getInitials() {
+        if (firstName != null && lastName != null) {
+            return ("" + firstName.charAt(0) + lastName.charAt(0)).toUpperCase();
+        } else if (firstName != null) {
+            return ("" + firstName.charAt(0)).toUpperCase();
+        } else {
+            return "?";
+        }
+    }
+
     // Getters and Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
@@ -162,5 +175,4 @@ public class User {
     public void updateTimestamp() {
         this.updatedAt = LocalDateTime.now();
     }
-    
 }

@@ -43,7 +43,7 @@ public class OrderController {
         if (user == null) {
             throw new RuntimeException("User not found");
         }
-        List<Order> orders = orderService.getOrderByNumber(user.getId());
+        List<Order> orders = orderService.getUserOrders(user);
         model.addAttribute("orders", orders);
         return "orders"; // orders.html
     }
