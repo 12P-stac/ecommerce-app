@@ -6,14 +6,27 @@ import com.ecommerce.model.User;
 import com.ecommerce.service.OrderService;
 import com.ecommerce.service.ProductService;
 import com.ecommerce.service.UserService;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.io.IOException;
 import java.math.BigDecimal;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.security.Principal;
 import java.util.List;
 
 @Controller
@@ -89,7 +102,7 @@ public class SellerDashboardController {
     }
 
     // ✅ Add product form
-    @GetMapping("/products/new")
+    @GetMapping("/add-product")
     public String showAddProductForm(Authentication authentication, Model model) {
         addSellerToModel(authentication, model);
         model.addAttribute("product", new Product());
@@ -175,4 +188,42 @@ public class SellerDashboardController {
         addSellerToModel(authentication, model);
         return "seller/settings";
     }
-}
+    @PostMapping("/add-product")
+    public String saveProduct(@ModelAttribute Product product,
+                              @RequestParam("imageFile") MultipartFile imageFile,
+                              Principal principal,
+                              RedirectAttributes redirectAttributes) {
+        try {
+            if (!imageFile.isEmpty()) {
+                // Define directory to save uploads
+                Path uploadDir = Paths.get("uploads/");
+                if (!Files.exists(uploadDir)) {
+                    Files.createDirectories(uploadDir);
+                }
+    
+                // Save file
+                String fileName = System.currentTimeMillis() + "_" + imageFile.getOriginalFilename();
+                Path filePath = uploadDir.resolve(fileName);
+                Files.copy(imageFile.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
+    
+                // Set the URL path to your entity
+                product.setImageUrl("/uploads/" + fileName);
+            }
+    
+            // Save product to DB
+            productService.saveProduct(product);
+    
+            redirectAttributes.addFlashAttribute("success", "Product added successfully!");
+            return "redirect:/seller/dashboard";
+    
+        } catch (IOException e) {
+            redirectAttributes.addFlashAttribute("error", "Failed to upload image: " + e.getMessage());
+            return "redirect:/seller/add-product";
+        }
+    }
+    
+    }
+    
+
+
+
